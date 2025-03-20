@@ -33,8 +33,6 @@ export default function EmailVerification({
       code: confirmationCode as string,
     });
 
-    console.log(response);
-
     if (response.success) {
       handleClose();
     } else {

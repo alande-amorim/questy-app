@@ -18,12 +18,6 @@ async function resetPassword({
   resetCode,
   password,
 }: ResetPasswordRequest): Promise<ResetPasswordResponse> {
-  console.log({
-    ClientId: process.env.REACT_APP_COGNITO_CLIENT_ID,
-    Username: email,
-    ConfirmationCode: resetCode,
-    Password: password,
-  });
   const command = new ConfirmForgotPasswordCommand({
     ClientId: process.env.REACT_APP_COGNITO_CLIENT_ID,
     Username: email,
@@ -32,8 +26,7 @@ async function resetPassword({
   });
 
   try {
-    const response = await cognito.send(command);
-    console.log(response);
+    await cognito.send(command);
     return { success: true };
   } catch (error) {
     const _error: ResetPasswordResponse = {

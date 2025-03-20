@@ -16,8 +16,7 @@ async function recoverPassword(
   });
 
   try {
-    const response = await cognito.send(command);
-    console.log(response);
+    await cognito.send(command);
     return {
       success: true,
     };
