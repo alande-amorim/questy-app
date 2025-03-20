@@ -6,6 +6,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import OutlinedInput from "@mui/material/OutlinedInput";
+import recoverPassword from "../../../services/auth/recover-password";
+import { useNavigate } from "react-router";
 
 interface ForgotPasswordProps {
   open: boolean;
@@ -16,6 +18,24 @@ export default function ForgotPassword({
   open,
   handleClose,
 }: ForgotPasswordProps) {
+  const navigate = useNavigate();
+  const [error, setError] = React.useState<string>("");
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const form = new FormData(event.currentTarget);
+    const email = form.get("email");
+
+    const response = await recoverPassword(email as string);
+
+    if (response.success) {
+      return navigate("/recover-password?email=" + email);
+    } else {
+      setError(response.message || "Failed to request password recovery.");
+    }
+  };
+
   return (
     <Dialog
       open={open}
@@ -23,10 +43,7 @@ export default function ForgotPassword({
       slotProps={{
         paper: {
           component: "form",
-          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-            event.preventDefault();
-            handleClose();
-          },
+          onSubmit: handleSubmit,
           sx: { backgroundImage: "none" },
         },
       }}

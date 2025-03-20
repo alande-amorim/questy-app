@@ -1,4 +1,3 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
@@ -16,7 +15,11 @@ import ForgotPassword from "./components/ForgotPassword";
 import AppTheme from "../../components/theme/AppTheme";
 import ColorModeSelect from "../../components/theme/ColorModeSelect";
 import { SitemarkIcon } from "../../components/theme/components/CustomIcons";
-import { Divider } from "@mui/material";
+import { Alert, Divider } from "@mui/material";
+import signIn from "../../services/auth/sign-in";
+import { useState } from "react";
+import { User } from "../../entities";
+import EmailVerification from "../../components/EmailVerification/EmailVerification";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -61,30 +64,40 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-  const [open, setOpen] = React.useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+  const [openPasswordRecovery, setOpenPasswordRecovery] = useState(false);
+  const [openVerification, setOpenVerification] = useState(false);
+  const [signInData, setSignInData] = useState<User.SignIn | null>(null);
+  const [submitError, setSubmitError] = useState<string>("");
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setSubmitError("");
+    event.preventDefault();
     if (emailError || passwordError) {
-      event.preventDefault();
       return;
     }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    const form = new FormData(event.currentTarget);
+    const data: User.SignIn = {
+      email: form.get("email") as string,
+      password: form.get("password") as string,
+    };
+    setSignInData(data);
+    const response = await signIn(data);
+
+    if (response.success) {
+      // @TODO
+      // Save user data to local storage
+      // Redirect to dashboard
+      console.log("Sign in successful");
+    } else {
+      setSubmitError(response.message || "Failed to sign in.");
+      if (response.errorType === "UserNotConfirmedException") {
+        setOpenVerification(true);
+      }
+    }
   };
 
   const validateInputs = () => {
@@ -175,11 +188,30 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                 color={passwordError ? "error" : "primary"}
               />
             </FormControl>
+
+            {submitError && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {submitError}
+              </Alert>
+            )}
+
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-            <ForgotPassword open={open} handleClose={handleClose} />
+            <ForgotPassword
+              open={openPasswordRecovery}
+              handleClose={() => setOpenPasswordRecovery(false)}
+            />
+
+            {signInData && (
+              <EmailVerification
+                open={openVerification}
+                handleClose={() => setOpenVerification(false)}
+                email={signInData.email}
+              />
+            )}
+
             <Button
               type="submit"
               fullWidth
@@ -188,15 +220,15 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             >
               Sign in
             </Button>
-            {/* <Link
+            <Link
               component="button"
               type="button"
-              onClick={handleClickOpen}
+              onClick={() => setOpenPasswordRecovery(true)}
               variant="body2"
               sx={{ alignSelf: "center" }}
             >
               Forgot your password?
-            </Link> */}
+            </Link>
           </Box>
           <Divider>
             <Typography sx={{ color: "text.secondary" }}>or</Typography>

@@ -6,21 +6,20 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import OutlinedInput from "@mui/material/OutlinedInput";
-import { User } from "../../../entities";
-import confirmSignUp from "../../../services/auth/confirm-signup";
+import confirmSignUp from "../../services/auth/confirm-signup";
 import { Alert } from "@mui/material";
 
-interface ConfirmationProps {
+interface EmailVerificatioProps {
   open: boolean;
-  signUpData: User.SignUp;
+  email: string;
   handleClose: () => void;
 }
 
-export default function Confirmation({
+export default function EmailVerification({
   open,
   handleClose,
-  signUpData,
-}: ConfirmationProps) {
+  email,
+}: EmailVerificatioProps) {
   const [error, setError] = React.useState<string>("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -30,7 +29,7 @@ export default function Confirmation({
     const confirmationCode = form.get("confirmation_code");
 
     const response = await confirmSignUp({
-      email: signUpData.email,
+      email,
       code: confirmationCode as string,
     });
 
@@ -60,9 +59,9 @@ export default function Confirmation({
         sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%" }}
       >
         <DialogContentText>
-          Enter the confirmation code sent to{" "}
+          Enter the confirmation code that was sent to{" "}
           <b>
-            <u>{signUpData.email}</u>
+            <u>{email}</u>
           </b>
           .
         </DialogContentText>
