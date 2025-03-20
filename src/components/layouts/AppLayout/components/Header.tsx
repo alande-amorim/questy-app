@@ -6,7 +6,7 @@ import NavbarBreadcrumbs from "./NavbarBreadcrumbs";
 import MenuButton from "./MenuButton";
 
 import Search from "./Search";
-import ColorModeIconDropdown from "../../../../components/theme/ColorModeIconDropdown";
+import ColorModeIconDropdown from "../../../theme/ColorModeIconDropdown";
 
 export default function Header() {
   return (
