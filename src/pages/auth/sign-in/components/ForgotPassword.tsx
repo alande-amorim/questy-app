@@ -6,8 +6,9 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import OutlinedInput from "@mui/material/OutlinedInput";
-import recoverPassword from "../../../services/auth/recover-password";
+import recoverPassword from "../../../../services/auth/recover-password";
 import { useNavigate } from "react-router";
+import { Alert } from "@mui/material";
 
 interface ForgotPasswordProps {
   open: boolean;
@@ -67,6 +68,12 @@ export default function ForgotPassword({
           type="email"
           fullWidth
         />
+
+        {error && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            {error}
+          </Alert>
+        )}
       </DialogContent>
       <DialogActions sx={{ pb: 3, px: 3 }}>
         <Button onClick={handleClose}>Cancel</Button>

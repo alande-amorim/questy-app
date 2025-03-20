@@ -1,8 +1,6 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
 import CssBaseline from "@mui/material/CssBaseline";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import Link from "@mui/material/Link";
@@ -11,15 +9,13 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
-import ForgotPassword from "./components/ForgotPassword";
-import AppTheme from "../../components/theme/AppTheme";
-import ColorModeSelect from "../../components/theme/ColorModeSelect";
-import { SitemarkIcon } from "../../components/theme/components/CustomIcons";
+import AppTheme from "../../../components/theme/AppTheme";
+import ColorModeSelect from "../../../components/theme/ColorModeSelect";
+import { SitemarkIcon } from "../../../components/theme/components/CustomIcons";
 import { Alert, Divider } from "@mui/material";
-import signIn from "../../services/auth/sign-in";
-import { useState } from "react";
-import { User } from "../../entities";
-import EmailVerification from "../../components/EmailVerification/EmailVerification";
+import { useEffect, useState } from "react";
+import resetPassword from "../../../services/auth/reset-password";
+import { useNavigate, useSearchParams } from "react-router";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -63,57 +59,39 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export default function SignIn(props: { disableCustomTheme?: boolean }) {
-  const [emailError, setEmailError] = useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = useState("");
+export default function ResetPassword(props: { disableCustomTheme?: boolean }) {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
-  const [openPasswordRecovery, setOpenPasswordRecovery] = useState(false);
-  const [openVerification, setOpenVerification] = useState(false);
-  const [signInData, setSignInData] = useState<User.SignIn | null>(null);
   const [submitError, setSubmitError] = useState<string>("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     setSubmitError("");
     event.preventDefault();
-    if (emailError || passwordError) {
+    if (passwordError) {
       return;
     }
     const form = new FormData(event.currentTarget);
-    const data: User.SignIn = {
-      email: form.get("email") as string,
+    const data = {
+      email: searchParams.get("email") as string,
       password: form.get("password") as string,
+      resetCode: form.get("reset-code") as string,
     };
-    setSignInData(data);
-    const response = await signIn(data);
+    const response = await resetPassword(data);
 
     if (response.success) {
-      // @TODO
-      // Save user data to local storage
-      // Redirect to dashboard
-      console.log("Sign in successful");
+      console.log("Password reset successful");
+      navigate("/sign-in");
     } else {
-      setSubmitError(response.message || "Failed to sign in.");
-      if (response.errorType === "UserNotConfirmedException") {
-        setOpenVerification(true);
-      }
+      setSubmitError(response.message || "Failed to reset password.");
     }
   };
 
   const validateInputs = () => {
-    const email = document.getElementById("email") as HTMLInputElement;
     const password = document.getElementById("password") as HTMLInputElement;
 
     let isValid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage("Please enter a valid email address.");
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage("");
-    }
 
     if (!password.value || password.value.length < 6) {
       setPasswordError(true);
@@ -126,6 +104,14 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 
     return isValid;
   };
+
+  // Redirect to sign-in page if email is not provided
+  useEffect(() => {
+    const isValidEmail = /\S+@\S+\.\S+/.test(searchParams.get("email") || "");
+    if (!isValidEmail) {
+      navigate("/sign-in");
+    }
+  }, [navigate, searchParams]);
 
   return (
     <AppTheme {...props}>
@@ -141,7 +127,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             variant="h4"
             sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
           >
-            Sign in
+            Recover Password
           </Typography>
           <Box
             component="form"
@@ -157,22 +143,36 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
               <TextField
-                error={emailError}
-                helperText={emailErrorMessage}
                 id="email"
                 type="email"
                 name="email"
-                placeholder="your@email.com"
+                placeholder={searchParams.get("email") || ""}
                 autoComplete="email"
+                disabled
                 autoFocus
                 required
                 fullWidth
                 variant="outlined"
-                color={emailError ? "error" : "primary"}
               />
             </FormControl>
+
             <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
+              <FormLabel htmlFor="reset-code">Reset Code</FormLabel>
+              <TextField
+                helperText={"The code sent to your email"}
+                name="reset-code"
+                placeholder=""
+                type="text"
+                id="reset-code"
+                autoFocus
+                required
+                fullWidth
+                variant="outlined"
+              />
+            </FormControl>
+
+            <FormControl>
+              <FormLabel htmlFor="password">New Password</FormLabel>
               <TextField
                 error={passwordError}
                 helperText={passwordErrorMessage}
@@ -195,53 +195,27 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               </Alert>
             )}
 
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <ForgotPassword
-              open={openPasswordRecovery}
-              handleClose={() => setOpenPasswordRecovery(false)}
-            />
-
-            {signInData && (
-              <EmailVerification
-                open={openVerification}
-                handleClose={() => setOpenVerification(false)}
-                email={signInData.email}
-              />
-            )}
-
             <Button
               type="submit"
               fullWidth
               variant="contained"
               onClick={validateInputs}
             >
-              Sign in
+              Set New Password
             </Button>
-            <Link
-              component="button"
-              type="button"
-              onClick={() => setOpenPasswordRecovery(true)}
-              variant="body2"
-              sx={{ alignSelf: "center" }}
-            >
-              Forgot your password?
-            </Link>
           </Box>
           <Divider>
             <Typography sx={{ color: "text.secondary" }}>or</Typography>
           </Divider>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <Typography sx={{ textAlign: "center" }}>
-              Don't have an account?{" "}
+              Already have an account?{" "}
               <Link
-                href="/sign-up"
+                href="/sign-in"
                 variant="body2"
                 sx={{ alignSelf: "center" }}
               >
-                Sign up
+                Sign in
               </Link>
             </Typography>
           </Box>

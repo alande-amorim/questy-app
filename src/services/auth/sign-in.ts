@@ -1,17 +1,18 @@
 import { InitiateAuthCommand } from "@aws-sdk/client-cognito-identity-provider";
-import { User } from "../../entities";
 import cognito from "./cognito";
+import { Auth } from "../../entities/auth";
 
 type SignInResponse = {
   success: boolean;
   errorType?: string;
   message?: string;
+  data?: { email: string; token: string };
 };
 
 async function signIn({
   email,
   password,
-}: User.SignIn): Promise<SignInResponse> {
+}: Auth.SignIn.Request): Promise<SignInResponse> {
   const command = new InitiateAuthCommand({
     AuthFlow: "USER_PASSWORD_AUTH",
     ClientId: process.env.REACT_APP_COGNITO_CLIENT_ID,
@@ -23,8 +24,13 @@ async function signIn({
 
   try {
     const response = await cognito.send(command);
-    console.log(response);
-    return { success: true };
+    const token = response.AuthenticationResult?.IdToken;
+
+    if (!token) {
+      return { success: false, message: "Token not received from Cognito." };
+    }
+
+    return { success: true, data: { email, token } };
   } catch (error) {
     const _error: SignInResponse = {
       success: false,

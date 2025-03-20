@@ -1,6 +1,6 @@
 import { SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
-import { User } from "../../entities";
 import cognito from "./cognito";
+import { Auth } from "../../entities/auth";
 
 type SignUpResponse = {
   success: boolean;
@@ -11,7 +11,7 @@ async function signUp({
   email,
   password,
   name,
-}: User.SignUp): Promise<SignUpResponse> {
+}: Auth.SignUp.Request): Promise<SignUpResponse> {
   const command = new SignUpCommand({
     ClientId: process.env.REACT_APP_COGNITO_CLIENT_ID,
     Username: email,

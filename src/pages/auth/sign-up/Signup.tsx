@@ -1,6 +1,8 @@
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
+import Divider from "@mui/material/Divider";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import Link from "@mui/material/Link";
@@ -9,13 +11,13 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
-import AppTheme from "../../components/theme/AppTheme";
-import ColorModeSelect from "../../components/theme/ColorModeSelect";
-import { SitemarkIcon } from "../../components/theme/components/CustomIcons";
-import { Alert, Divider } from "@mui/material";
-import { useEffect, useState } from "react";
-import resetPassword from "../../services/auth/reset-password";
-import { useNavigate, useSearchParams } from "react-router";
+import AppTheme from "../../../components/theme/AppTheme";
+import ColorModeSelect from "../../../components/theme/ColorModeSelect";
+import { SitemarkIcon } from "../../../components/theme/components/CustomIcons";
+import signUp from "../../../services/auth/sign-up";
+import { User } from "../../../entities";
+import { Alert } from "@mui/material";
+import EmailVerification from "../../../components/EmailVerification/EmailVerification";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -25,18 +27,18 @@ const Card = styled(MuiCard)(({ theme }) => ({
   padding: theme.spacing(4),
   gap: theme.spacing(2),
   margin: "auto",
-  [theme.breakpoints.up("sm")]: {
-    maxWidth: "450px",
-  },
   boxShadow:
     "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
+  [theme.breakpoints.up("sm")]: {
+    width: "450px",
+  },
   ...theme.applyStyles("dark", {
     boxShadow:
       "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
   }),
 }));
 
-const SignInContainer = styled(Stack)(({ theme }) => ({
+const SignUpContainer = styled(Stack)(({ theme }) => ({
   height: "calc((1 - var(--template-frame-height, 0)) * 100dvh)",
   minHeight: "100%",
   padding: theme.spacing(2),
@@ -59,41 +61,32 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export default function RecoverPassword(props: {
-  disableCustomTheme?: boolean;
-}) {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+export default function SignUp(props: { disableCustomTheme?: boolean }) {
+  const [open, setOpen] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+  const [nameError, setNameError] = useState(false);
+  const [nameErrorMessage, setNameErrorMessage] = useState("");
+  const [signUpData, setSignUpData] = useState<User.SignUp | null>(null);
   const [submitError, setSubmitError] = useState<string>("");
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    setSubmitError("");
-    event.preventDefault();
-    if (passwordError) {
-      return;
-    }
-    const form = new FormData(event.currentTarget);
-    const data = {
-      email: searchParams.get("email") as string,
-      password: form.get("password") as string,
-      resetCode: form.get("reset-code") as string,
-    };
-    const response = await resetPassword(data);
-
-    if (response.success) {
-      console.log("Password reset successful");
-      navigate("/sign-in");
-    } else {
-      setSubmitError(response.message || "Failed to reset password.");
-    }
-  };
-
   const validateInputs = () => {
+    const email = document.getElementById("email") as HTMLInputElement;
     const password = document.getElementById("password") as HTMLInputElement;
+    const name = document.getElementById("name") as HTMLInputElement;
 
     let isValid = true;
+
+    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+      setEmailError(true);
+      setEmailErrorMessage("Please enter a valid email address.");
+      isValid = false;
+    } else {
+      setEmailError(false);
+      setEmailErrorMessage("");
+    }
 
     if (!password.value || password.value.length < 6) {
       setPasswordError(true);
@@ -104,24 +97,46 @@ export default function RecoverPassword(props: {
       setPasswordErrorMessage("");
     }
 
+    if (!name.value || name.value.length < 1) {
+      setNameError(true);
+      setNameErrorMessage("Name is required.");
+      isValid = false;
+    } else {
+      setNameError(false);
+      setNameErrorMessage("");
+    }
+
     return isValid;
   };
 
-  // Redirect to sign-in page if email is not provided
-  useEffect(() => {
-    const isValidEmail = /\S+@\S+\.\S+/.test(searchParams.get("email") || "");
-    if (!isValidEmail) {
-      navigate("/sign-in");
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (nameError || emailError || passwordError) {
+      return;
     }
-  }, [navigate, searchParams]);
+
+    const form = new FormData(event.currentTarget);
+    const data = {
+      name: form.get("name"),
+      email: form.get("email"),
+      password: form.get("password"),
+    };
+    setSignUpData(data as User.SignUp);
+    const response = await signUp(data as User.SignUp);
+
+    if (response.success) {
+      setOpen(true);
+    } else {
+      setSubmitError(response.message || "Failed to sign up.");
+    }
+  };
 
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      <SignInContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect
-          sx={{ position: "fixed", top: "1rem", right: "1rem" }}
-        />
+      <ColorModeSelect sx={{ position: "fixed", top: "1rem", right: "1rem" }} />
+      <SignUpContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
           <SitemarkIcon />
           <Typography
@@ -129,64 +144,55 @@ export default function RecoverPassword(props: {
             variant="h4"
             sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
           >
-            Recover Password
+            Sign up
           </Typography>
           <Box
             component="form"
             onSubmit={handleSubmit}
-            noValidate
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              width: "100%",
-              gap: 2,
-            }}
+            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
+            <FormControl>
+              <FormLabel htmlFor="name">Full name</FormLabel>
+              <TextField
+                autoComplete="name"
+                name="name"
+                required
+                fullWidth
+                id="name"
+                placeholder="Jon Snow"
+                error={nameError}
+                helperText={nameErrorMessage}
+                color={nameError ? "error" : "primary"}
+              />
+            </FormControl>
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
               <TextField
+                required
+                fullWidth
                 id="email"
-                type="email"
+                placeholder="your@email.com"
                 name="email"
-                placeholder={searchParams.get("email") || ""}
                 autoComplete="email"
-                disabled
-                autoFocus
-                required
-                fullWidth
                 variant="outlined"
+                error={emailError}
+                helperText={emailErrorMessage}
+                color={passwordError ? "error" : "primary"}
               />
             </FormControl>
-
             <FormControl>
-              <FormLabel htmlFor="reset-code">Reset Code</FormLabel>
+              <FormLabel htmlFor="password">Password</FormLabel>
               <TextField
-                helperText={"The code sent to your email"}
-                name="reset-code"
-                placeholder=""
-                type="text"
-                id="reset-code"
-                autoFocus
                 required
                 fullWidth
-                variant="outlined"
-              />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel htmlFor="password">New Password</FormLabel>
-              <TextField
-                error={passwordError}
-                helperText={passwordErrorMessage}
                 name="password"
                 placeholder="••••••"
                 type="password"
                 id="password"
-                autoComplete="current-password"
-                autoFocus
-                required
-                fullWidth
+                autoComplete="new-password"
                 variant="outlined"
+                error={passwordError}
+                helperText={passwordErrorMessage}
                 color={passwordError ? "error" : "primary"}
               />
             </FormControl>
@@ -203,9 +209,18 @@ export default function RecoverPassword(props: {
               variant="contained"
               onClick={validateInputs}
             >
-              Set New Password
+              Sign up
             </Button>
           </Box>
+
+          {signUpData && (
+            <EmailVerification
+              open={open}
+              handleClose={() => setOpen(false)}
+              email={signUpData.email}
+            />
+          )}
+
           <Divider>
             <Typography sx={{ color: "text.secondary" }}>or</Typography>
           </Divider>
@@ -222,7 +237,7 @@ export default function RecoverPassword(props: {
             </Typography>
           </Box>
         </Card>
-      </SignInContainer>
+      </SignUpContainer>
     </AppTheme>
   );
 }
