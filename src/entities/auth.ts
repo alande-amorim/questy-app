@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 export namespace Auth {
   export namespace SignIn {
     export type Request = {
@@ -33,4 +35,23 @@ export namespace Auth {
 
     export type Response = unknown;
   }
+
+  export type IdToken = {
+    sub: string;
+    email_verified: true;
+    iss: string;
+    cognitousername: string;
+    origin_jti: string;
+    aud: string;
+    event_id: string;
+    token_use: string;
+    auth_time: number;
+    name: string;
+    exp: number;
+    iat: number;
+    jti: string;
+    email: string;
+  };
+
+  export type User = User.Fields & { token: string };
 }

@@ -1,12 +1,13 @@
 import { InitiateAuthCommand } from "@aws-sdk/client-cognito-identity-provider";
 import cognito from "./cognito";
 import { Auth } from "../../entities/auth";
+import { jwtDecode } from "jwt-decode";
 
 type SignInResponse = {
   success: boolean;
   errorType?: string;
   message?: string;
-  data?: { email: string; token: string };
+  user?: Auth.User;
 };
 
 async function signIn({
@@ -24,13 +25,23 @@ async function signIn({
 
   try {
     const response = await cognito.send(command);
-    const token = response.AuthenticationResult?.IdToken;
+    const idToken = response.AuthenticationResult?.IdToken;
+    const accessToken = response.AuthenticationResult?.AccessToken;
 
-    if (!token) {
+    if (!idToken || !accessToken) {
       return { success: false, message: "Token not received from Cognito." };
     }
 
-    return { success: true, data: { email, token } };
+    const decodedIdToken = jwtDecode<Auth.IdToken>(idToken);
+
+    const user: Auth.User = {
+      id: decodedIdToken.sub,
+      name: decodedIdToken.name,
+      email,
+      token: accessToken,
+    };
+
+    return { success: true, user };
   } catch (error) {
     const _error: SignInResponse = {
       success: false,

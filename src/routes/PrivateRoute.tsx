@@ -5,7 +5,7 @@ export default function PrivateRoute() {
   const user = useAuthStore((state) => state.user);
 
   if (!user) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/sign-in" />;
   }
 
   return <Outlet />;

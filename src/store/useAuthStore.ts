@@ -1,18 +1,18 @@
 import { create, StateCreator } from "zustand";
+import { Auth } from "../entities";
 
 interface AuthState {
-  user: { email: string; token: string } | null;
-  login: (email: string, token: string) => void;
+  user: Auth.User | null;
+  login: (user: Auth.User) => void;
   logout: () => void;
 }
 
 const initializer: StateCreator<AuthState, [], []> = (set) => {
   return {
     user: JSON.parse(localStorage.getItem("user") || "null"),
-    login: (email, token) => {
-      const userData = { email, token };
-      localStorage.setItem("user", JSON.stringify(userData));
-      set({ user: userData });
+    login: (user) => {
+      localStorage.setItem("user", JSON.stringify(user));
+      set({ user });
     },
     logout: () => {
       localStorage.removeItem("user");
