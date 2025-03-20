@@ -205,7 +205,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             <Typography sx={{ textAlign: "center" }}>
               Don't have an account?{" "}
               <Link
-                href="/sign-in"
+                href="/sign-up"
                 variant="body2"
                 sx={{ alignSelf: "center" }}
               >

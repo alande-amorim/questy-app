@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,6 +14,11 @@ import { styled } from "@mui/material/styles";
 import AppTheme from "../../components/theme/AppTheme";
 import ColorModeSelect from "../../components/theme/ColorModeSelect";
 import { SitemarkIcon } from "../../components/theme/components/CustomIcons";
+import signUp from "../../services/auth/sign-up";
+import { User } from "../../entities";
+import Confirmation from "./components/Confirmation";
+import { sign } from "crypto";
+import { Alert } from "@mui/material";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -58,12 +63,15 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp(props: { disableCustomTheme?: boolean }) {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-  const [nameError, setNameError] = React.useState(false);
-  const [nameErrorMessage, setNameErrorMessage] = React.useState("");
+  const [open, setOpen] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+  const [nameError, setNameError] = useState(false);
+  const [nameErrorMessage, setNameErrorMessage] = useState("");
+  const [signUpData, setSignUpData] = useState<User.SignUp | null>(null);
+  const [submitError, setSubmitError] = useState<string>("");
 
   const validateInputs = () => {
     const email = document.getElementById("email") as HTMLInputElement;
@@ -102,18 +110,27 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
     return isValid;
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
     if (nameError || emailError || passwordError) {
-      event.preventDefault();
       return;
     }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get("name"),
-      lastName: data.get("lastName"),
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+
+    const form = new FormData(event.currentTarget);
+    const data = {
+      name: form.get("name"),
+      email: form.get("email"),
+      password: form.get("password"),
+    };
+    setSignUpData(data as User.SignUp);
+    const response = await signUp(data as User.SignUp);
+
+    if (response.success) {
+      setOpen(true);
+    } else {
+      setSubmitError(response.message || "Failed to sign up.");
+    }
   };
 
   return (
@@ -180,6 +197,13 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 color={passwordError ? "error" : "primary"}
               />
             </FormControl>
+
+            {submitError && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {submitError}
+              </Alert>
+            )}
+
             <Button
               type="submit"
               fullWidth
@@ -189,6 +213,15 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
               Sign up
             </Button>
           </Box>
+
+          {signUpData && (
+            <Confirmation
+              open={open}
+              handleClose={() => setOpen(false)}
+              signUpData={signUpData}
+            />
+          )}
+
           <Divider>
             <Typography sx={{ color: "text.secondary" }}>or</Typography>
           </Divider>
