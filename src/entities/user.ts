@@ -15,4 +15,14 @@ export namespace User {
     email: string;
     password: string;
   };
+
+  export interface Model extends Fields {}
+
+  export interface CreateDTO extends Fields {}
+
+  export const mock = (): Model => ({
+    id: Math.random().toString(36).substr(2, 9),
+    name: Math.random().toString(36).substr(2, 9),
+    email: Math.random().toString(36).substr(2, 9),
+  });
 }

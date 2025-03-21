@@ -7,9 +7,8 @@ import ListItemText from "@mui/material/ListItemText";
 import Stack from "@mui/material/Stack";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import WorkIcon from "@mui/icons-material/Work";
-import GroupsIcon from "@mui/icons-material/Groups";
-import AssignmentRoundedIcon from "@mui/icons-material/AssignmentRounded";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import ProjectSelector from "./ProjectSelector";
 
 const mainListItems = [
   { text: "Home", icon: <HomeRoundedIcon />, route: "/dashboard" },
@@ -19,22 +18,31 @@ const mainListItems = [
 ];
 
 export default function MenuContent() {
+  const navigate = useNavigate();
+
+  const handleCreateProject = () => {
+    navigate("/project/create");
+  };
+
   return (
-    <Stack sx={{ flexGrow: 1, p: 1, justifyContent: "space-between" }}>
-      <List dense>
-        {mainListItems.map((item, index) => (
-          <ListItem key={index} disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              selected={index === 0}
-              component={Link}
-              to={item.route}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+    <Stack sx={{ flexGrow: 1, justifyContent: "space-between" }}>
+      <Stack>
+        <ProjectSelector onCreateProject={handleCreateProject} />
+        <List dense sx={{ p: 1 }}>
+          {mainListItems.map((item, index) => (
+            <ListItem key={index} disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                selected={index === 0}
+                component={Link}
+                to={item.route}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Stack>
     </Stack>
   );
 }

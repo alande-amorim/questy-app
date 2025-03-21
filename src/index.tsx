@@ -12,6 +12,10 @@ import Projects from "./pages/app/projects/Proejcts";
 import EditProject from "./pages/app/project/EditProject";
 import Project from "./pages/app/project/Project";
 import CreateProject from "./pages/app/project/CreateProject";
+import Board from "./pages/app/project/board/Board";
+import Members from "./pages/app/project/members/Members";
+import Backlog from "./pages/app/project/backlog/Backlog";
+import Settings from "./pages/app/project/settings/Settings";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -34,8 +38,14 @@ root.render(
 
         <Route path="/project">
           <Route path="create" element={<CreateProject />} />
-          <Route path=":id" element={<Project />} />
-          <Route path=":id/edit" element={<EditProject />} />
+          <Route path=":id">
+            <Route index element={<Project />} />
+            <Route path="edit" element={<EditProject />} />
+            <Route path="board" element={<Board />} />
+            <Route path="members" element={<Members />} />
+            <Route path="backlog" element={<Backlog />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
         </Route>
       </Route>
     </Routes>
