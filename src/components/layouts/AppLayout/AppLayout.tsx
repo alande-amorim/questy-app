@@ -14,6 +14,7 @@ import SideMenu from "./components/SideMenu";
 import AppTheme from "../../theme/AppTheme";
 
 type AppLayoutProps = {
+  pageTitle: string;
   disableCustomTheme?: boolean;
   children: React.ReactNode;
 };
@@ -24,7 +25,7 @@ export default function AppLayout(props: AppLayoutProps) {
       <CssBaseline enableColorScheme />
       <Box sx={{ display: "flex" }}>
         <SideMenu />
-        <AppNavbar />
+        <AppNavbar pageTitle={props.pageTitle} />
         {/* Main content */}
         <Box
           component="main"

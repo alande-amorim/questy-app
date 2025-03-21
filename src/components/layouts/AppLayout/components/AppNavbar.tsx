@@ -28,7 +28,11 @@ const Toolbar = styled(MuiToolbar)({
   },
 });
 
-export default function AppNavbar() {
+type AppNavbarProps = {
+  pageTitle: string;
+};
+
+export default function AppNavbar({ pageTitle }: AppNavbarProps) {
   const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = (newOpen: boolean) => () => {
@@ -69,7 +73,7 @@ export default function AppNavbar() {
               component="h1"
               sx={{ color: "text.primary" }}
             >
-              Dashboard
+              {pageTitle}
             </Typography>
           </Stack>
           <ColorModeIconDropdown />

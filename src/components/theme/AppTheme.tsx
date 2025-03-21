@@ -33,7 +33,7 @@ export default function AppTheme(props: AppThemeProps) {
           shadows,
           shape,
           components: {
-            ...inputsCustomizations,
+            // ...inputsCustomizations,
             ...dataDisplayCustomizations,
             ...feedbackCustomizations,
             ...navigationCustomizations,
@@ -42,6 +42,7 @@ export default function AppTheme(props: AppThemeProps) {
           },
         });
   }, [disableCustomTheme, themeComponents]);
+
   if (disableCustomTheme) {
     return <React.Fragment>{children}</React.Fragment>;
   }

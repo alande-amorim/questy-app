@@ -167,10 +167,6 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             </Alert>
           )}
 
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
           <ForgotPassword
             open={openPasswordRecovery}
             handleClose={() => setOpenPasswordRecovery(false)}
