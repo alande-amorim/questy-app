@@ -79,6 +79,11 @@ export interface ProjectResponseDTO {
    * @example [{"id":"123e4567-e89b-12d3-a456-426614174000","title":"Task 1","description":"Task description","status":"TODO"}]
    */
   tasks: string[];
+  /**
+   * Project counts
+   * @example {"tasks":10,"users":2}
+   */
+  _count: object;
 }
 
 export interface UpdateProjectDTO {

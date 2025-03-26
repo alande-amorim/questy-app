@@ -1,8 +1,5 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
-
-import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import Link from "@mui/material/Link";
@@ -18,7 +15,7 @@ import { useState } from "react";
 import { User } from "../../../entities";
 import EmailVerification from "../../../components/EmailVerification/EmailVerification";
 import { useAuthStore } from "../../../store/useAuthStore";
-import { useNavigate } from "react-router";
+
 import AuthLayout from "../../../components/layouts/AuthLayout/AuthLayout";
 
 const Card = styled(MuiCard)(({ theme }) => ({

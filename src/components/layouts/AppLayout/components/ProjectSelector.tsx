@@ -5,34 +5,38 @@ import {
   Typography,
   Divider,
   SelectChangeEvent,
+  CircularProgress,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
-
-interface Project {
-  id: string;
-  name: string;
-  code: string;
-}
-
-// Mock data - replace with actual data
-const mockProjects: Project[] = [
-  { id: "1", name: "Project Alpha", code: "ALPHA" },
-  { id: "2", name: "Project Beta", code: "BETA" },
-];
+import { useProjects } from "../../../../hooks/queries/useProjects";
+import { ProjectResponseDTO } from "../../../../services/questy/http-client";
 
 interface ProjectSelectorProps {
   onCreateProject: () => void;
+  onSelectProject?: (projectId: string) => void;
 }
 
 export default function ProjectSelector({
   onCreateProject,
+  onSelectProject,
 }: ProjectSelectorProps) {
   const [selectedProject, setSelectedProject] = useState<string>("");
+  const { data: projects, isLoading } = useProjects();
 
   const handleChange = (event: SelectChangeEvent<string>) => {
-    setSelectedProject(event.target.value);
+    const projectId = event.target.value;
+    setSelectedProject(projectId);
+    onSelectProject?.(projectId);
   };
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+        <CircularProgress size={24} />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -54,7 +58,7 @@ export default function ProjectSelector({
         <MenuItem value="" disabled>
           <Typography color="text.secondary">Select a project</Typography>
         </MenuItem>
-        {mockProjects.map((project) => (
+        {projects?.map((project: ProjectResponseDTO) => (
           <MenuItem key={project.id} value={project.id}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Typography

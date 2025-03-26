@@ -6,15 +6,11 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Stack from "@mui/material/Stack";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
-import WorkIcon from "@mui/icons-material/Work";
 import { Link, useNavigate } from "react-router";
 import ProjectSelector from "./ProjectSelector";
 
 const mainListItems = [
-  { text: "Home", icon: <HomeRoundedIcon />, route: "/dashboard" },
-  // { text: "Team", icon: <GroupsIcon />, route: "/team" },
-  { text: "Projects", icon: <WorkIcon />, route: "/projects" },
-  // { text: "Tasks", icon: <AssignmentRoundedIcon />, route: "/tasks" }
+  { text: "Projects", icon: <HomeRoundedIcon />, route: "/projects" },
 ];
 
 export default function MenuContent() {

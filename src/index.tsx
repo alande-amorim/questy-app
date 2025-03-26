@@ -6,8 +6,6 @@ import SignIn from "./pages/auth/sign-in/SignIn";
 import SignUp from "./pages/auth/sign-up/Signup";
 import ResetPassword from "./pages/auth/reset-password/ResetPassword";
 import PrivateRoute from "./routes/PrivateRoute";
-import Dashboard from "./pages/app/dashboard/Dashboard";
-import Team from "./pages/app/team/Team";
 import AuthRoute from "./routes/AuthRoute";
 import Projects from "./pages/app/projects/Projects";
 import EditProject from "./pages/app/project/EditProject";
@@ -25,7 +23,7 @@ root.render(
   <QuestyQueryProvider>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="/" element={<Navigate to="/projects" />} />
 
         <Route element={<AuthRoute />}>
           <Route path="/sign-in" element={<SignIn />} />
@@ -34,8 +32,6 @@ root.render(
         </Route>
 
         <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/team" element={<Team />} />
           <Route path="/projects" element={<Projects />} />
 
           <Route path="/project">

@@ -9,7 +9,6 @@ import {
   ListItemAvatar,
   ListItemText,
   Avatar,
-  Typography,
 } from "@mui/material";
 import { User } from "../../entities/user";
 

@@ -1,5 +1,6 @@
 import { create, StateCreator } from "zustand";
 import { Auth } from "../entities";
+import { questyQueryClient } from "../services/questy";
 
 interface AuthState {
   user: Auth.User | null;
@@ -15,8 +16,9 @@ const initializer: StateCreator<AuthState, [], []> = (set) => {
       set({ user });
     },
     logout: () => {
+      questyQueryClient.invalidateQueries();
       localStorage.removeItem("user");
-      set({ user: null });
+      window.location.href = "/sign-in";
     },
   };
 };

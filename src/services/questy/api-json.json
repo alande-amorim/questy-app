@@ -733,9 +733,25 @@
             "items": {
               "type": "string"
             }
+          },
+          "_count": {
+            "type": "object",
+            "description": "Project counts",
+            "example": {
+              "tasks": 10,
+              "users": 2
+            }
           }
         },
-        "required": ["id", "code", "name", "createdAt", "updatedAt", "tasks"]
+        "required": [
+          "id",
+          "code",
+          "name",
+          "createdAt",
+          "updatedAt",
+          "tasks",
+          "_count"
+        ]
       },
       "UpdateProjectDTO": {
         "type": "object",

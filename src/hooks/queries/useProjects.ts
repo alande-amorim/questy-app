@@ -1,11 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../services/questy/api-client";
-import { CreateProjectDTO, UpdateProjectDTO } from "../../services/questy";
+import {
+  CreateProjectDTO,
+  ProjectResponseDTO,
+  UpdateProjectDTO,
+} from "../../services/questy";
 
 export const useProjects = () => {
   return useQuery({
     queryKey: ["projects"],
-    queryFn: () => api.projects.projectsControllerFindMany(),
+    queryFn: async (): Promise<ProjectResponseDTO[]> => {
+      const response = await api.projects.projectsControllerFindMany();
+      return response.data;
+    },
   });
 };
 

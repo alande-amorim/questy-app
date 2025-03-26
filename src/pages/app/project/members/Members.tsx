@@ -14,7 +14,7 @@ interface User {
 
 export default function Members() {
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
-  const [members, setMembers] = useState<User[]>([]);
+  const [, setMembers] = useState<User[]>([]);
 
   const handleAddUser = (user: User) => {
     setMembers((prev) => [...prev, user]);

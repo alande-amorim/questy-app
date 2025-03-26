@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  CreateInviteDTO,
-  AcceptInviteDTO,
-} from "../../services/questy/http-client";
+
 import api from "../../services/questy/api-client";
+import { AcceptInviteDTO, CreateInviteDTO } from "../../services/questy";
 
 export const useCreateInvite = (projectId: string) => {
   const questyQueryClient = useQueryClient();

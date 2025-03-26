@@ -1,4 +1,4 @@
-import { User } from "./user";
+import { User as UserEntity } from "./user";
 
 export namespace Auth {
   export namespace SignIn {
@@ -53,5 +53,5 @@ export namespace Auth {
     email: string;
   };
 
-  export type User = User.Fields & { token: string };
+  export type User = UserEntity.Fields & { token: string };
 }

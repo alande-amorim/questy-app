@@ -1,10 +1,5 @@
-import MainGrid from "./components/MainGrid";
 import AppLayout from "../../../components/layouts/AppLayout/AppLayout";
 
 export default function Dashboard(props: { disableCustomTheme?: boolean }) {
-  return (
-    <AppLayout pageTitle="Dashboard">
-      <MainGrid />
-    </AppLayout>
-  );
+  return <AppLayout pageTitle="Dashboard">{/* <MainGrid /> */}</AppLayout>;
 }

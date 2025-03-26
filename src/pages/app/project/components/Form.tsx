@@ -28,6 +28,7 @@ interface User {
 }
 
 interface ProjectFormData {
+  code: string | null;
   name: string;
   description?: string;
   teamMembers: User[];
@@ -43,6 +44,7 @@ const mockUsers: User[] = [
 export default function Form(props: { disableCustomTheme?: boolean }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<ProjectFormData>({
+    code: null,
     name: "",
     description: "",
     teamMembers: [],
@@ -55,6 +57,7 @@ export default function Form(props: { disableCustomTheme?: boolean }) {
     event.preventDefault();
     createProject(
       {
+        code: formData.code,
         name: formData.name,
         description: formData.description || "",
       },
