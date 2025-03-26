@@ -25,6 +25,11 @@ export interface SigninRequestDTO {
 
 export interface CreateProjectDTO {
   /**
+   * Project code
+   * @example "PRJ"
+   */
+  code: string | null;
+  /**
    * Project name
    * @example "My Project"
    */
@@ -42,6 +47,11 @@ export interface ProjectResponseDTO {
    * @example "123e4567-e89b-12d3-a456-426614174000"
    */
   id: string;
+  /**
+   * Project code
+   * @example "PRJ"
+   */
+  code: string;
   /**
    * Project name
    * @example "My Project"

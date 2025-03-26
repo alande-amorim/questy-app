@@ -6,7 +6,9 @@ import { useAuthStore } from "../../store/useAuthStore";
 
 export const useAuth = () => {
   const navigate = useNavigate();
+
   const logout = useAuthStore((state) => state.logout);
+
   const query = useQuery({
     queryKey: ["auth", "me"],
     queryFn: async () => {
@@ -14,6 +16,7 @@ export const useAuth = () => {
       return response;
     },
     retry: false,
+    refetchInterval: 1000 * 60, // 1 minute
   });
 
   useEffect(() => {
