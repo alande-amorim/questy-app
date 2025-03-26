@@ -1,11 +1,23 @@
-import { Navigate, Outlet } from "react-router";
-import { useAuthStore } from "../store/useAuthStore";
+import { Outlet } from "react-router";
+import { Box, CircularProgress } from "@mui/material";
+import { useAuth } from "../hooks/queries/useAuth";
 
 export default function PrivateRoute() {
-  const user = useAuthStore((state) => state.user);
+  const { isLoading } = useAuth();
 
-  if (!user) {
-    return <Navigate to="/sign-in" />;
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return <Outlet />;

@@ -9,12 +9,15 @@ import {
   Tooltip,
   Grid2,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import Section from "../../../../components/layouts/AppLayout/components/Section";
 import { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import AddUserModal from "./AddUserModal";
+import { useCreateProject } from "../../../../hooks/queries/useProjects";
+import { useNavigate } from "react-router";
 
 interface User {
   id: string;
@@ -25,7 +28,6 @@ interface User {
 }
 
 interface ProjectFormData {
-  code: string;
   name: string;
   description?: string;
   teamMembers: User[];
@@ -39,18 +41,29 @@ const mockUsers: User[] = [
 ];
 
 export default function Form(props: { disableCustomTheme?: boolean }) {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<ProjectFormData>({
-    code: "PRJ",
     name: "",
     description: "",
     teamMembers: [],
   });
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
 
+  const { mutate: createProject, isPending } = useCreateProject();
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("Form submitted:", formData);
-    // Add your submit logic here
+    createProject(
+      {
+        name: formData.name,
+        description: formData.description || "",
+      },
+      {
+        onSuccess: () => {
+          navigate("/projects");
+        },
+      }
+    );
   };
 
   const handleChange = (field: keyof ProjectFormData, value: any) => {
@@ -80,8 +93,9 @@ export default function Form(props: { disableCustomTheme?: boolean }) {
           variant="contained"
           type="submit"
           form="project-form"
+          disabled={isPending}
         >
-          Submit
+          {isPending ? <CircularProgress size={24} /> : "Create Project"}
         </Button>
       }
     >
@@ -92,16 +106,6 @@ export default function Form(props: { disableCustomTheme?: boolean }) {
         sx={{ display: "flex", flexDirection: "column", gap: 2 }}
       >
         <TextField
-          id="code"
-          label="Code"
-          value={formData.code}
-          onChange={(e) => handleChange("code", e.target.value)}
-          variant="outlined"
-          required
-          fullWidth
-        />
-
-        <TextField
           id="name"
           label="Name"
           value={formData.name}
@@ -109,6 +113,7 @@ export default function Form(props: { disableCustomTheme?: boolean }) {
           variant="outlined"
           required
           fullWidth
+          disabled={isPending}
         />
 
         <TextField
@@ -120,6 +125,7 @@ export default function Form(props: { disableCustomTheme?: boolean }) {
           rows={4}
           variant="outlined"
           fullWidth
+          disabled={isPending}
         />
 
         <Box sx={{ flexGrow: 1 }}>
@@ -147,6 +153,7 @@ export default function Form(props: { disableCustomTheme?: boolean }) {
                     label="Search"
                     variant="outlined"
                     size="small"
+                    disabled={isPending}
                   />
                 )}
                 renderTags={() => null}
@@ -189,6 +196,7 @@ export default function Form(props: { disableCustomTheme?: boolean }) {
                           className="remove-icon"
                           size="small"
                           onClick={() => handleRemoveMember(member.id)}
+                          disabled={isPending}
                           sx={{
                             position: "absolute",
                             top: -8,
@@ -213,6 +221,7 @@ export default function Form(props: { disableCustomTheme?: boolean }) {
                 )}
                 <IconButton
                   onClick={() => setIsAddUserModalOpen(true)}
+                  disabled={isPending}
                   sx={{
                     width: 64,
                     height: 64,

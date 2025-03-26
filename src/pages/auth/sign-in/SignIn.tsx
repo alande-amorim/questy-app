@@ -42,7 +42,6 @@ const Card = styled(MuiCard)(({ theme }) => ({
 
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const login = useAuthStore((state) => state.login);
-  const navigate = useNavigate();
   const [emailError, setEmailError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
   const [passwordError, setPasswordError] = useState(false);
@@ -68,7 +67,6 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 
     if (response.success && response.user) {
       login(response.user);
-      navigate("/dashboard");
     } else {
       setSubmitError(response.message || "Failed to sign in.");
       if (response.errorType === "UserNotConfirmedException") {
