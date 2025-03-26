@@ -30,6 +30,7 @@ interface TaskModalProps {
   onClose: () => void;
   onSave: () => void;
   onEdit: (task: Task.Model) => void;
+  title?: string;
 }
 
 export default function TaskModal({
@@ -39,6 +40,7 @@ export default function TaskModal({
   onClose,
   onSave,
   onEdit,
+  title = "Edit Task",
 }: TaskModalProps) {
   const [editedTask, setEditedTask] = useState<Task.Model | null>(task);
   const [userSelectorOpen, setUserSelectorOpen] = useState(false);
@@ -71,6 +73,7 @@ export default function TaskModal({
       <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
         <DialogTitle>
           <Stack spacing={1}>
+            <Typography variant="h6">{title}</Typography>
             <Typography variant="overline" color="text.secondary">
               {task.id}
             </Typography>
@@ -98,6 +101,7 @@ export default function TaskModal({
               <TextField
                 label="Title"
                 fullWidth
+                required
                 value={editedTask.title}
                 onChange={(e) => handleChange({ title: e.target.value })}
               />
@@ -106,6 +110,7 @@ export default function TaskModal({
                 fullWidth
                 multiline
                 rows={4}
+                required
                 value={editedTask.description}
                 onChange={(e) => handleChange({ description: e.target.value })}
               />
@@ -123,6 +128,7 @@ export default function TaskModal({
                 <TextField
                   label="Story Points"
                   type="number"
+                  required
                   value={editedTask.storyPoints || ""}
                   onChange={(e) =>
                     handleChange({

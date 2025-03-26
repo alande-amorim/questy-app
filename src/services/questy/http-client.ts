@@ -231,7 +231,7 @@ export interface CreateTaskDTO {
    * Assignee ID
    * @example "123e4567-e89b-12d3-a456-426614174000"
    */
-  assigneeId: string;
+  assigneeId: string | null;
   /**
    * Reporter ID
    * @example "123e4567-e89b-12d3-a456-426614174000"

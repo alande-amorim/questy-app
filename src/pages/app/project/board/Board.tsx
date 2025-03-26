@@ -22,46 +22,93 @@ import {
 import {
   useProjectTasks,
   useUpdateTask,
+  useCreateTask,
 } from "../../../../hooks/queries/useTasks";
 import { Navigate, useParams } from "react-router";
+import { useAuthStore } from "../../../../store/useAuthStore";
+
 export default function Board() {
   const { projectId } = useParams();
   const { data: tasks, isLoading } = useProjectTasks(projectId || "");
   const updateTask = useUpdateTask(projectId || "");
+  const createTask = useCreateTask(projectId || "");
   const lanes = Object.values(Task.Status);
   const [selectedTask, setSelectedTask] = useState<Task.Model | null>(null);
   const [editedTask, setEditedTask] = useState<Task.Model | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const user = useAuthStore((state) => state.user);
 
   if (!projectId) {
     return <Navigate to="/projects" />;
   }
 
-  const handleAddCard = (status: Task.StatusType) => {};
+  const handleAddCard = () => {
+    console.log(user);
+    const newTask: Task.Model = {
+      id: "",
+      title: "",
+      description: "",
+      status: Task.Status.BACKLOG,
+      storyPoints: 0,
+      projectId,
+      reporterId: user?.id || "",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      reporter: {
+        id: user?.id || "",
+        name: user?.name || "",
+        email: user?.email || "",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      assignee: null,
+      metadata: {
+        isEditing: true,
+      },
+    };
+    setSelectedTask(newTask);
+    setEditedTask(newTask);
+    setIsCreating(true);
+    setIsModalOpen(true);
+  };
 
   const handleSaveCard = async () => {
     if (!editedTask) return;
 
-    const status = editedTask.status;
-
-    await updateTask.mutateAsync({
-      taskId: editedTask.id,
-      data: {
+    if (isCreating) {
+      await createTask.mutateAsync({
         title: editedTask.title,
-        description: editedTask.description,
-        status,
+        description: editedTask.description || "",
+        status: editedTask.status,
         storyPoints: editedTask.storyPoints,
-        reporterId: editedTask.reporter?.id,
-        assigneeId: editedTask.assignee?.id,
-      },
-    });
+        reporterId: editedTask.reporter?.id || "",
+        assigneeId: editedTask.assignee?.id || null,
+      });
+    } else {
+      await updateTask.mutateAsync({
+        taskId: editedTask.id,
+        data: {
+          title: editedTask.title,
+          description: editedTask.description,
+          status: editedTask.status,
+          storyPoints: editedTask.storyPoints,
+          reporterId: editedTask.reporter?.id,
+          assigneeId: editedTask.assignee?.id,
+        },
+      });
+    }
 
     setIsModalOpen(false);
+    setSelectedTask(null);
+    setEditedTask(null);
+    setIsCreating(false);
   };
 
   const handleCardClick = (task: Task.Model) => {
     setSelectedTask(task);
     setEditedTask(task);
+    setIsCreating(false);
     setIsModalOpen(true);
   };
 
@@ -69,6 +116,7 @@ export default function Board() {
     setSelectedTask(null);
     setEditedTask(null);
     setIsModalOpen(false);
+    setIsCreating(false);
   };
 
   const handleEditCard = (task: Task.Model) => {
@@ -163,16 +211,16 @@ export default function Board() {
                     <IconButton
                       size="small"
                       className="add-card-button"
-                      onClick={() => handleAddCard(lane)}
+                      onClick={handleAddCard}
                       sx={{
                         opacity: 0,
-                        transition: "opacity 0.2s",
+                        transition: "opacity 0.2s ease-in-out",
                         "&:hover": {
-                          bgcolor: "action.hover",
+                          opacity: 1,
                         },
                       }}
                     >
-                      <AddIcon fontSize="small" />
+                      <AddIcon />
                     </IconButton>
                   </Tooltip>
                 </Box>
@@ -241,6 +289,7 @@ export default function Board() {
           onClose={handleModalClose}
           onSave={handleSaveCard}
           onEdit={handleEditCard}
+          title={isCreating ? "Create New Task" : "Edit Task"}
         />
       )}
     </ProjectLayout>
