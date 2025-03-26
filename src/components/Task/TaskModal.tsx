@@ -18,7 +18,6 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { Task } from "../../entities/task";
-import { Lane } from "../../entities/lane";
 import { User } from "../../entities/user";
 import PersonIcon from "@mui/icons-material/Person";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
@@ -27,10 +26,10 @@ import UserSelector from "./UserSelector";
 interface TaskModalProps {
   open: boolean;
   task: Task.Model | null;
-  laneId: string;
+  status: Task.StatusType;
   onClose: () => void;
   onSave: (
-    laneId: string,
+    status: string,
     taskId: string,
     title: string,
     description: string,
@@ -41,7 +40,7 @@ interface TaskModalProps {
 export default function TaskModal({
   open,
   task,
-  laneId,
+  status,
   onClose,
   onSave,
 }: TaskModalProps) {
@@ -55,11 +54,11 @@ export default function TaskModal({
 
   const handleSave = () => {
     if (editedTask.title.trim()) {
-      onSave(laneId, task.id, editedTask.title, editedTask.description || "", {
+      onSave(status, task.id, editedTask.title, editedTask.description || "", {
         storyPoints: editedTask.storyPoints,
         reporter: editedTask.reporter,
         assignee: editedTask.assignee,
-        laneId: editedTask.laneId,
+        status: editedTask.status,
       });
       onClose();
     }
@@ -79,7 +78,7 @@ export default function TaskModal({
         <DialogTitle>
           <Stack spacing={1}>
             <Typography variant="overline" color="text.secondary">
-              {task.code}
+              {task.id}
             </Typography>
           </Stack>
         </DialogTitle>
@@ -89,15 +88,18 @@ export default function TaskModal({
               <FormControl fullWidth>
                 <InputLabel>Status</InputLabel>
                 <Select
-                  value={editedTask.laneId}
+                  value={editedTask.status}
                   label="Status"
                   onChange={(e) =>
-                    setEditedTask({ ...editedTask, laneId: e.target.value })
+                    setEditedTask({
+                      ...editedTask,
+                      status: e.target.value as Task.StatusType,
+                    })
                   }
                 >
-                  {Lane.getAll().map((lane) => (
-                    <MenuItem key={lane.id} value={lane.id}>
-                      {lane.title}
+                  {Task.lanes.map((lane) => (
+                    <MenuItem key={lane} value={lane}>
+                      {lane}
                     </MenuItem>
                   ))}
                 </Select>
@@ -138,9 +140,7 @@ export default function TaskModal({
                   onChange={(e) =>
                     setEditedTask({
                       ...editedTask,
-                      storyPoints: e.target.value
-                        ? Number(e.target.value)
-                        : undefined,
+                      storyPoints: e.target.value ? Number(e.target.value) : 0,
                     })
                   }
                 />

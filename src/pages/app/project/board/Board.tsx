@@ -11,7 +11,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import TaskCard from "../../../../components/Task/TaskCard";
 import TaskModal from "../../../../components/Task/TaskModal";
-import { Task, Lane, User } from "../../../../entities";
+import { Task } from "../../../../entities";
 
 import {
   DragDropContext,
@@ -19,76 +19,31 @@ import {
   Draggable,
   DropResult,
 } from "@hello-pangea/dnd";
-
-// Mock data - replace with actual data
-const mockTasks: Task.Model[] = [
-  Task.create({
-    title: "Task 1",
-    description: "Description 1",
-    laneId: Lane.Status.BACKLOG,
-    assignee: User.mock(),
-  }),
-  Task.create({
-    title: "Task 2",
-    description: "Description 2",
-    laneId: Lane.Status.BACKLOG,
-  }),
-  Task.create({
-    title: "Task 3",
-    description: "Description 3",
-    laneId: Lane.Status.IN_PROGRESS,
-  }),
-  Task.create({
-    title: "Task 4",
-    description: "Description 4",
-    laneId: Lane.Status.DONE,
-  }),
-];
-
+import {
+  useProjectTasks,
+  useUpdateTask,
+} from "../../../../hooks/queries/useTasks";
+import { Navigate, useParams } from "react-router";
 export default function Board() {
-  const lanes = Lane.getAll();
-  const [tasks, setTasks] = useState<Task.Model[]>(mockTasks);
+  const { projectId } = useParams();
+  const { data: tasks, isLoading } = useProjectTasks(projectId || "");
+  const updateTask = useUpdateTask(projectId || "");
+  const lanes = Object.values(Task.Status);
   const [selectedTask, setSelectedTask] = useState<Task.Model | null>(null);
 
-  const handleAddCard = (laneId: string) => {
-    const newTask = Task.create({
-      title: "",
-      description: "",
-      laneId,
-      order: 0,
-      metadata: {
-        isEditing: true,
-      },
-    });
+  if (!projectId) {
+    return <Navigate to="/projects" />;
+  }
 
-    setTasks([newTask, ...tasks]);
-  };
+  const handleAddCard = (status: Task.StatusType) => {};
 
   const handleSaveCard = (
-    laneId: string,
+    status: Task.StatusType,
     taskId: string,
     title: string,
     description: string,
     updates?: Partial<Task.UpdateDTO>
-  ) => {
-    setTasks(
-      tasks.map((task) => {
-        if (task.id === taskId) {
-          return Task.update(task, {
-            title,
-            description,
-            laneId,
-            ...updates,
-            metadata: {
-              ...task.metadata,
-              isEditing: false,
-            },
-          });
-        }
-        return task;
-      })
-    );
-  };
+  ) => {};
 
   const handleCardClick = (task: Task.Model) => {
     setSelectedTask(task);
@@ -98,29 +53,13 @@ export default function Board() {
     setSelectedTask(null);
   };
 
-  const handleEditCard = (task: Task.Model) => {
-    setTasks(
-      tasks.map((t) => {
-        if (t.id === task.id) {
-          return Task.update(t, {
-            metadata: {
-              ...t.metadata,
-              isEditing: true,
-            },
-          });
-        }
-        return t;
-      })
-    );
-  };
+  const handleEditCard = (task: Task.Model) => {};
 
-  const handleDragEnd = (result: DropResult) => {
+  const handleDragEnd = async (result: DropResult) => {
     const { destination, source, draggableId } = result;
 
-    // Dropped outside a valid droppable
     if (!destination) return;
 
-    // Dropped in the same position
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
@@ -128,37 +67,20 @@ export default function Board() {
       return;
     }
 
-    // Find the task that was dragged
-    const task = tasks.find((t) => t.id === draggableId);
+    const task = tasks?.find((t) => t.id === draggableId);
     if (!task) return;
 
-    // Create a new array of tasks
-    const newTasks = Array.from(tasks);
-
-    // Remove the task from its original position
-    newTasks.splice(
-      newTasks.findIndex((t) => t.id === draggableId),
-      1
-    );
-
-    // Find all tasks in the destination lane
-    const destinationTasks = tasks.filter(
-      (t) => t.laneId === destination.droppableId
-    );
-
-    // Calculate the new index in the overall tasks array
-    const destinationIndex =
-      newTasks.findIndex((t) => t.laneId === destination.droppableId) +
-      destination.index;
-
-    // Insert the task at the new position
-    newTasks.splice(destinationIndex, 0, {
-      ...task,
-      laneId: destination.droppableId,
+    await updateTask.mutateAsync({
+      taskId: draggableId,
+      data: {
+        status: destination.droppableId as "TODO" | "IN_PROGRESS" | "DONE",
+      },
     });
-
-    setTasks(newTasks);
   };
+
+  if (isLoading) {
+    return <Typography>Loading...</Typography>;
+  }
 
   return (
     <ProjectLayout pageTitle="Board">
@@ -180,9 +102,9 @@ export default function Board() {
               height: "100%",
             }}
           >
-            {lanes.map((lane: Lane.Model) => (
+            {lanes.map((lane: Task.StatusType) => (
               <Paper
-                key={lane.id}
+                key={lane}
                 elevation={0}
                 sx={{
                   width: 280,
@@ -220,14 +142,14 @@ export default function Board() {
                       letterSpacing: "0.1em",
                     }}
                   >
-                    {lane.title} (
-                    {tasks.filter((task) => task.laneId === lane.id).length})
+                    {lane} (
+                    {tasks?.filter((task) => task.status === lane).length})
                   </Typography>
-                  <Tooltip title={`Add card to ${lane.title}`}>
+                  <Tooltip title={`Add card to ${lane}`}>
                     <IconButton
                       size="small"
                       className="add-card-button"
-                      onClick={() => handleAddCard(lane.id)}
+                      onClick={() => handleAddCard(lane)}
                       sx={{
                         opacity: 0,
                         transition: "opacity 0.2s",
@@ -240,7 +162,7 @@ export default function Board() {
                     </IconButton>
                   </Tooltip>
                 </Box>
-                <Droppable droppableId={lane.id}>
+                <Droppable droppableId={lane}>
                   {(provided, snapshot) => (
                     <Stack
                       ref={provided.innerRef}
@@ -258,7 +180,7 @@ export default function Board() {
                       }}
                     >
                       {tasks
-                        .filter((task) => task.laneId === lane.id)
+                        ?.filter((task) => task.status === lane)
                         .map((task, index) => (
                           <Draggable
                             key={task.id}
@@ -277,8 +199,22 @@ export default function Board() {
                               >
                                 <TaskCard
                                   task={task}
-                                  laneId={lane.id}
-                                  onSave={handleSaveCard}
+                                  status={lane}
+                                  onSave={(
+                                    status,
+                                    taskId,
+                                    title,
+                                    description,
+                                    updates
+                                  ) =>
+                                    handleSaveCard(
+                                      status as Task.StatusType,
+                                      taskId,
+                                      title,
+                                      description,
+                                      updates
+                                    )
+                                  }
                                   onClick={handleCardClick}
                                   onMaximize={handleCardClick}
                                   onEdit={handleEditCard}
@@ -301,9 +237,17 @@ export default function Board() {
         <TaskModal
           open={!!selectedTask}
           task={selectedTask}
-          laneId={selectedTask.laneId}
+          status={selectedTask.status}
           onClose={handleModalClose}
-          onSave={handleSaveCard}
+          onSave={(status, taskId, title, description, updates) =>
+            handleSaveCard(
+              status as Task.StatusType,
+              taskId,
+              title,
+              description,
+              updates
+            )
+          }
         />
       )}
     </ProjectLayout>

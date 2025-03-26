@@ -13,9 +13,9 @@ import { Task } from "../../entities/task";
 
 interface TaskCardProps {
   task: Task.Model;
-  laneId: string;
+  status: Task.StatusType;
   onSave: (
-    laneId: string,
+    status: Task.StatusType,
     taskId: string,
     title: string,
     description: string,
@@ -28,7 +28,7 @@ interface TaskCardProps {
 
 export default function TaskCard({
   task,
-  laneId,
+  status,
   onSave,
   onClick,
 
@@ -43,7 +43,7 @@ export default function TaskCard({
     return (
       <ClickAwayListener
         onClickAway={() =>
-          onSave(laneId, task.id, task.title, task.description || "")
+          onSave(status, task.id, task.title, task.description || "")
         }
       >
         <Paper
@@ -68,7 +68,7 @@ export default function TaskCard({
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
-                  onSave(laneId, task.id, task.title, task.description || "");
+                  onSave(status, task.id, task.title, task.description || "");
                 }
               }}
             />
@@ -118,7 +118,7 @@ export default function TaskCard({
         <Stack spacing={1}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Typography variant="caption" color="text.secondary">
-              {task.code}
+              {task.id}
             </Typography>
           </Box>
           <Typography

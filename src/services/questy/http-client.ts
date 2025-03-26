@@ -76,7 +76,7 @@ export interface ProjectResponseDTO {
   updatedAt: string;
   /**
    * Project tasks
-   * @example [{"id":"123e4567-e89b-12d3-a456-426614174000","title":"Task 1","description":"Task description","status":"TODO"}]
+   * @example [{"id":"123e4567-e89b-12d3-a456-426614174000","title":"Task 1","description":"Task description","status":"BACKLOG"}]
    */
   tasks: string[];
   /**
@@ -239,6 +239,36 @@ export interface CreateTaskDTO {
   reporterId: string;
 }
 
+export interface UserDTO {
+  /**
+   * User ID
+   * @example "123e4567-e89b-12d3-a456-426614174000"
+   */
+  id: string;
+  /**
+   * User email
+   * @example "user@example.com"
+   */
+  email: string;
+  /**
+   * User name
+   * @example "John Doe"
+   */
+  name: string;
+  /**
+   * User created at
+   * @format date-time
+   * @example "2021-01-01T00:00:00.000Z"
+   */
+  createdAt: string;
+  /**
+   * User updated at
+   * @format date-time
+   * @example "2021-01-01T00:00:00.000Z"
+   */
+  updatedAt: string;
+}
+
 export interface TaskResponseDTO {
   /**
    * Task ID
@@ -257,9 +287,9 @@ export interface TaskResponseDTO {
   description: string;
   /**
    * Task status
-   * @example "TODO"
+   * @example "BACKLOG"
    */
-  status: "TODO" | "IN_PROGRESS" | "DONE";
+  status: "BACKLOG" | "DOING" | "DONE";
   /**
    * Story points
    * @example 5
@@ -292,6 +322,10 @@ export interface TaskResponseDTO {
    * @example "2024-03-20T10:00:00Z"
    */
   updatedAt: string;
+  /** Assignee */
+  assignee?: UserDTO | null;
+  /** Reporter */
+  reporter: UserDTO;
 }
 
 export interface UpdateTaskDTO {

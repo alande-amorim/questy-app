@@ -17,7 +17,7 @@ interface UserSelectorProps {
   title: string;
   onClose: () => void;
   onSelect: (user: User.Fields) => void;
-  selectedUser?: User.Fields;
+  selectedUser?: User.Fields | null;
 }
 
 // Mock users - replace with actual data

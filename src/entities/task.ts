@@ -1,16 +1,7 @@
-import { User } from "./user";
+import { TaskResponseDTO, UserDTO } from "../services/questy/http-client";
 
 export namespace Task {
-  export interface Model {
-    id: string;
-    code: string;
-    title: string;
-    description?: string;
-    laneId: string;
-    order: number;
-    storyPoints?: number;
-    reporter?: User.Fields;
-    assignee?: User.Fields;
+  export interface Model extends TaskResponseDTO {
     metadata?: {
       isEditing?: boolean;
     };
@@ -21,11 +12,11 @@ export namespace Task {
   export interface CreateDTO {
     title: string;
     description?: string;
-    laneId: string;
+    status: TaskResponseDTO["status"];
     order?: number;
     storyPoints?: number;
-    reporter?: User.Fields;
-    assignee?: User.Fields;
+    reporter?: UserDTO;
+    assignee?: UserDTO | null;
     metadata?: {
       isEditing?: boolean;
     };
@@ -35,23 +26,24 @@ export namespace Task {
     id: Id;
   }
 
-  export const create = (dto: CreateDTO): Model => ({
-    id: Math.random().toString(36).substr(2, 9),
-    code: `QST-${Math.floor(Math.random() * 1000)
-      .toString()
-      .padStart(3, "0")}`,
-    title: dto.title,
-    description: dto.description,
-    laneId: dto.laneId,
-    order: dto.order || 0,
-    storyPoints: dto.storyPoints,
-    reporter: dto.reporter,
-    assignee: dto.assignee,
-    metadata: dto.metadata,
+  export const create = (dto: TaskResponseDTO): Model => ({
+    ...dto,
+    metadata: {
+      isEditing: false,
+    },
   });
 
   export const update = (task: Model, dto: Partial<UpdateDTO>): Model => ({
     ...task,
     ...dto,
   });
+
+  export const Status = {
+    BACKLOG: "BACKLOG",
+    DOING: "DOING",
+    DONE: "DONE",
+  } as const;
+  export type StatusType = (typeof Status)[keyof typeof Status];
+
+  export const lanes = Object.values(Status);
 }

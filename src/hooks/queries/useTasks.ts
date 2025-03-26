@@ -1,14 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CreateTaskDTO,
+  TaskResponseDTO,
   UpdateTaskDTO,
 } from "../../services/questy/http-client";
 import api from "../../services/questy/api-client";
 
 export const useProjectTasks = (projectId: string) => {
-  return useQuery({
+  return useQuery<TaskResponseDTO[], Error>({
     queryKey: ["project", projectId, "tasks"],
-    queryFn: () => api.projects.tasksControllerFindMany(projectId),
+    queryFn: async () => {
+      const response = await api.projects.tasksControllerFindMany(projectId);
+      return response.data;
+    },
     enabled: !!projectId,
   });
 };

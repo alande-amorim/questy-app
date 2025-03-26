@@ -36,7 +36,7 @@ root.render(
 
           <Route path="/project">
             <Route path="create" element={<CreateProject />} />
-            <Route path=":id">
+            <Route path=":projectId">
               <Route index element={<Project />} />
               <Route path="edit" element={<EditProject />} />
               <Route path="board" element={<Board />} />

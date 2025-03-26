@@ -21,14 +21,8 @@
                       "type": "string",
                       "example": "user@example.com"
                     },
-                    "name": {
-                      "type": "string",
-                      "example": "John Doe"
-                    },
-                    "email_verified": {
-                      "type": "boolean",
-                      "example": true
-                    },
+                    "name": { "type": "string", "example": "John Doe" },
+                    "email_verified": { "type": "boolean", "example": true },
                     "cognito": {
                       "type": "object",
                       "properties": {
@@ -38,9 +32,7 @@
                         },
                         "groups": {
                           "type": "array",
-                          "items": {
-                            "type": "string"
-                          },
+                          "items": { "type": "string" },
                           "example": []
                         }
                       }
@@ -56,10 +48,7 @@
                           "type": "string",
                           "example": "user@example.com"
                         },
-                        "name": {
-                          "type": "string",
-                          "example": "John Doe"
-                        }
+                        "name": { "type": "string", "example": "John Doe" }
                       }
                     }
                   }
@@ -68,11 +57,7 @@
             }
           }
         },
-        "security": [
-          {
-            "access-token": []
-          }
-        ],
+        "security": [{ "access-token": [] }],
         "summary": "Get current user",
         "tags": ["auth"]
       }
@@ -88,18 +73,9 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": {
-                    "type": "string",
-                    "example": "user@example.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "password123"
-                  },
-                  "name": {
-                    "type": "string",
-                    "example": "John Doe"
-                  }
+                  "email": { "type": "string", "example": "user@example.com" },
+                  "password": { "type": "string", "example": "password123" },
+                  "name": { "type": "string", "example": "John Doe" }
                 },
                 "required": ["email", "password", "name"]
               }
@@ -107,12 +83,8 @@
           }
         },
         "responses": {
-          "201": {
-            "description": "User successfully registered"
-          },
-          "400": {
-            "description": "Invalid input data"
-          }
+          "201": { "description": "User successfully registered" },
+          "400": { "description": "Invalid input data" }
         },
         "summary": "Sign up a new user with Cognito",
         "tags": ["auth"]
@@ -129,14 +101,8 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": {
-                    "type": "string",
-                    "example": "user@example.com"
-                  },
-                  "code": {
-                    "type": "string",
-                    "example": "123456"
-                  }
+                  "email": { "type": "string", "example": "user@example.com" },
+                  "code": { "type": "string", "example": "123456" }
                 },
                 "required": ["email", "code"]
               }
@@ -144,12 +110,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Signup successfully confirmed"
-          },
-          "400": {
-            "description": "Invalid verification code"
-          }
+          "200": { "description": "Signup successfully confirmed" },
+          "400": { "description": "Invalid verification code" }
         },
         "summary": "Confirm user signup with verification code",
         "tags": ["auth"]
@@ -163,17 +125,11 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SigninRequestDTO"
-              }
+              "schema": { "$ref": "#/components/schemas/SigninRequestDTO" }
             }
           }
         },
-        "responses": {
-          "200": {
-            "description": "Sign in successful"
-          }
-        },
+        "responses": { "200": { "description": "Sign in successful" } },
         "summary": "Sign in with Cognito credentials",
         "tags": ["auth"]
       }
@@ -186,9 +142,7 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateProjectDTO"
-              }
+              "schema": { "$ref": "#/components/schemas/CreateProjectDTO" }
             }
           }
         },
@@ -197,18 +151,12 @@
             "description": "Project created successfully",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectResponseDTO"
-                }
+                "schema": { "$ref": "#/components/schemas/ProjectResponseDTO" }
               }
             }
           }
         },
-        "security": [
-          {
-            "access-token": []
-          }
-        ],
+        "security": [{ "access-token": [] }],
         "summary": "Create a new project",
         "tags": ["projects"]
       },
@@ -222,19 +170,13 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProjectResponseDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/ProjectResponseDTO" }
                 }
               }
             }
           }
         },
-        "security": [
-          {
-            "access-token": []
-          }
-        ],
+        "security": [{ "access-token": [] }],
         "summary": "Get all projects",
         "tags": ["projects"]
       }
@@ -248,9 +190,7 @@
             "required": true,
             "in": "path",
             "description": "ID do projeto a ser atualizado",
-            "schema": {
-              "example": "123e4567-e89b-12d3-a456-426614174000"
-            }
+            "schema": { "example": "123e4567-e89b-12d3-a456-426614174000" }
           }
         ],
         "responses": {
@@ -258,21 +198,13 @@
             "description": "Project found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectResponseDTO"
-                }
+                "schema": { "$ref": "#/components/schemas/ProjectResponseDTO" }
               }
             }
           },
-          "404": {
-            "description": "Project not found"
-          }
+          "404": { "description": "Project not found" }
         },
-        "security": [
-          {
-            "access-token": []
-          }
-        ],
+        "security": [{ "access-token": [] }],
         "summary": "Get a project by ID",
         "tags": ["projects"]
       },
@@ -284,18 +216,14 @@
             "required": true,
             "in": "path",
             "description": "ID do projeto a ser atualizado",
-            "schema": {
-              "example": "123e4567-e89b-12d3-a456-426614174000"
-            }
+            "schema": { "example": "123e4567-e89b-12d3-a456-426614174000" }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateProjectDTO"
-              }
+              "schema": { "$ref": "#/components/schemas/UpdateProjectDTO" }
             }
           }
         },
@@ -304,21 +232,13 @@
             "description": "Project updated successfully",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectResponseDTO"
-                }
+                "schema": { "$ref": "#/components/schemas/ProjectResponseDTO" }
               }
             }
           },
-          "404": {
-            "description": "Project not found"
-          }
+          "404": { "description": "Project not found" }
         },
-        "security": [
-          {
-            "access-token": []
-          }
-        ],
+        "security": [{ "access-token": [] }],
         "summary": "Update a project",
         "tags": ["projects"]
       },
@@ -326,18 +246,10 @@
         "operationId": "ProjectsController_delete",
         "parameters": [],
         "responses": {
-          "200": {
-            "description": "Project deleted successfully"
-          },
-          "404": {
-            "description": "Project not found"
-          }
+          "200": { "description": "Project deleted successfully" },
+          "404": { "description": "Project not found" }
         },
-        "security": [
-          {
-            "access-token": []
-          }
-        ],
+        "security": [{ "access-token": [] }],
         "summary": "Delete a project",
         "tags": ["projects"]
       }
@@ -351,9 +263,7 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateInviteDTO"
-              }
+              "schema": { "$ref": "#/components/schemas/CreateInviteDTO" }
             }
           }
         },
@@ -362,24 +272,14 @@
             "description": "Convite criado com sucesso",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InviteResponseDTO"
-                }
+                "schema": { "$ref": "#/components/schemas/InviteResponseDTO" }
               }
             }
           },
-          "401": {
-            "description": "Usuário não autenticado"
-          },
-          "404": {
-            "description": "Projeto não encontrado"
-          }
+          "401": { "description": "Usuário não autenticado" },
+          "404": { "description": "Projeto não encontrado" }
         },
-        "security": [
-          {
-            "access-token": []
-          }
-        ],
+        "security": [{ "access-token": [] }],
         "summary": "Convidar um usuário para um projeto",
         "tags": ["Project Invites"]
       }
@@ -393,9 +293,7 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AcceptInviteDTO"
-              }
+              "schema": { "$ref": "#/components/schemas/AcceptInviteDTO" }
             }
           }
         },
@@ -404,18 +302,12 @@
             "description": "Convite aceito com sucesso",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserResponseDTO"
-                }
+                "schema": { "$ref": "#/components/schemas/UserResponseDTO" }
               }
             }
           },
-          "400": {
-            "description": "Dados inválidos"
-          },
-          "404": {
-            "description": "Convite inválido ou expirado"
-          }
+          "400": { "description": "Dados inválidos" },
+          "404": { "description": "Convite inválido ou expirado" }
         },
         "summary": "Aceitar um convite para um projeto",
         "tags": ["Project Invites"]
@@ -429,18 +321,14 @@
             "name": "projectId",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateTaskDTO"
-              }
+              "schema": { "$ref": "#/components/schemas/CreateTaskDTO" }
             }
           }
         },
@@ -449,18 +337,12 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TaskResponseDTO"
-                }
+                "schema": { "$ref": "#/components/schemas/TaskResponseDTO" }
               }
             }
           }
         },
-        "security": [
-          {
-            "access-token": []
-          }
-        ],
+        "security": [{ "access-token": [] }],
         "summary": "Create a new task in a project",
         "tags": ["tasks"]
       },
@@ -471,9 +353,7 @@
             "name": "projectId",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -483,19 +363,13 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TaskResponseDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/TaskResponseDTO" }
                 }
               }
             }
           }
         },
-        "security": [
-          {
-            "access-token": []
-          }
-        ],
+        "security": [{ "access-token": [] }],
         "summary": "Get all tasks from a project",
         "tags": ["tasks"]
       }
@@ -508,17 +382,13 @@
             "name": "projectId",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -526,18 +396,12 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TaskResponseDTO"
-                }
+                "schema": { "$ref": "#/components/schemas/TaskResponseDTO" }
               }
             }
           }
         },
-        "security": [
-          {
-            "access-token": []
-          }
-        ],
+        "security": [{ "access-token": [] }],
         "summary": "Get a task by id from a project",
         "tags": ["tasks"]
       },
@@ -548,26 +412,20 @@
             "name": "projectId",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateTaskDTO"
-              }
+              "schema": { "$ref": "#/components/schemas/UpdateTaskDTO" }
             }
           }
         },
@@ -576,34 +434,20 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TaskResponseDTO"
-                }
+                "schema": { "$ref": "#/components/schemas/TaskResponseDTO" }
               }
             }
           }
         },
-        "security": [
-          {
-            "access-token": []
-          }
-        ],
+        "security": [{ "access-token": [] }],
         "summary": "Update a task in a project",
         "tags": ["tasks"]
       },
       "delete": {
         "operationId": "TasksController_remove",
         "parameters": [],
-        "responses": {
-          "204": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "access-token": []
-          }
-        ],
+        "responses": { "204": { "description": "" } },
+        "security": [{ "access-token": [] }],
         "summary": "Delete a task from a project",
         "tags": ["tasks"]
       }
@@ -616,22 +460,10 @@
     "contact": {}
   },
   "tags": [
-    {
-      "name": "auth",
-      "description": ""
-    },
-    {
-      "name": "projects",
-      "description": ""
-    },
-    {
-      "name": "Project Invites",
-      "description": ""
-    },
-    {
-      "name": "tasks",
-      "description": ""
-    }
+    { "name": "auth", "description": "" },
+    { "name": "projects", "description": "" },
+    { "name": "Project Invites", "description": "" },
+    { "name": "tasks", "description": "" }
   ],
   "servers": [],
   "components": {
@@ -641,7 +473,7 @@
         "bearerFormat": "JWT",
         "type": "http",
         "name": "Authorization",
-        "description": "Enter JWT token (Bearer \u003Ctoken\u003E)",
+        "description": "Enter JWT token (Bearer <token>)",
         "in": "header"
       }
     },
@@ -726,21 +558,16 @@
                 "id": "123e4567-e89b-12d3-a456-426614174000",
                 "title": "Task 1",
                 "description": "Task description",
-                "status": "TODO"
+                "status": "BACKLOG"
               }
             ],
             "type": "array",
-            "items": {
-              "type": "string"
-            }
+            "items": { "type": "string" }
           },
           "_count": {
             "type": "object",
             "description": "Project counts",
-            "example": {
-              "tasks": 10,
-              "users": 2
-            }
+            "example": { "tasks": 10, "users": 2 }
           }
         },
         "required": [
@@ -931,6 +758,39 @@
           "reporterId"
         ]
       },
+      "UserDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "example": "user@example.com"
+          },
+          "name": {
+            "type": "string",
+            "description": "User name",
+            "example": "John Doe"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "User created at",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "User updated at",
+            "example": "2021-01-01T00:00:00.000Z"
+          }
+        },
+        "required": ["id", "email", "name", "createdAt", "updatedAt"]
+      },
       "TaskResponseDTO": {
         "type": "object",
         "properties": {
@@ -952,8 +812,8 @@
           "status": {
             "type": "string",
             "description": "Task status",
-            "example": "TODO",
-            "enum": ["TODO", "IN_PROGRESS", "DONE"]
+            "example": "BACKLOG",
+            "enum": ["BACKLOG", "DOING", "DONE"]
           },
           "storyPoints": {
             "type": "number",
@@ -986,6 +846,16 @@
             "type": "string",
             "description": "Task last update date",
             "example": "2024-03-20T10:00:00Z"
+          },
+          "assignee": {
+            "description": "Assignee",
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/UserDTO" }]
+          },
+          "reporter": {
+            "description": "Reporter",
+            "nullable": false,
+            "allOf": [{ "$ref": "#/components/schemas/UserDTO" }]
           }
         },
         "required": [
@@ -997,7 +867,8 @@
           "projectId",
           "reporterId",
           "createdAt",
-          "updatedAt"
+          "updatedAt",
+          "reporter"
         ]
       },
       "UpdateTaskDTO": {
