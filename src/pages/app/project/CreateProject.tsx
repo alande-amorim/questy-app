@@ -1,6 +1,5 @@
 import { Box } from "@mui/material";
 import AppLayout from "../../../components/layouts/AppLayout/AppLayout";
-import Section from "../../../components/layouts/AppLayout/components/Section";
 import Form from "./components/Form";
 
 export default function CreateProject(props: { disableCustomTheme?: boolean }) {
