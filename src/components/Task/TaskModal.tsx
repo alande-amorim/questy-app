@@ -28,13 +28,8 @@ interface TaskModalProps {
   task: Task.Model | null;
   status: Task.StatusType;
   onClose: () => void;
-  onSave: (
-    status: string,
-    taskId: string,
-    title: string,
-    description: string,
-    updates?: Partial<Task.UpdateDTO>
-  ) => void;
+  onSave: () => void;
+  onEdit: (task: Task.Model) => void;
 }
 
 export default function TaskModal({
@@ -43,6 +38,7 @@ export default function TaskModal({
   status,
   onClose,
   onSave,
+  onEdit,
 }: TaskModalProps) {
   const [editedTask, setEditedTask] = useState<Task.Model | null>(task);
   const [userSelectorOpen, setUserSelectorOpen] = useState(false);
@@ -52,23 +48,21 @@ export default function TaskModal({
 
   if (!task || !editedTask) return null;
 
+  const handleChange = (changes: Partial<Task.Model>) => {
+    const updatedTask = { ...editedTask, ...changes };
+    setEditedTask(updatedTask);
+    onEdit(updatedTask);
+  };
+
   const handleSave = () => {
     if (editedTask.title.trim()) {
-      onSave(status, task.id, editedTask.title, editedTask.description || "", {
-        storyPoints: editedTask.storyPoints,
-        reporter: editedTask.reporter,
-        assignee: editedTask.assignee,
-        status: editedTask.status,
-      });
+      onSave();
       onClose();
     }
   };
 
   const handleUserSelect = (user: User.Fields) => {
-    setEditedTask({
-      ...editedTask,
-      [userSelectorType]: user,
-    });
+    handleChange({ [userSelectorType]: user });
     setUserSelectorOpen(false);
   };
 
@@ -91,10 +85,7 @@ export default function TaskModal({
                   value={editedTask.status}
                   label="Status"
                   onChange={(e) =>
-                    setEditedTask({
-                      ...editedTask,
-                      status: e.target.value as Task.StatusType,
-                    })
+                    handleChange({ status: e.target.value as Task.StatusType })
                   }
                 >
                   {Task.lanes.map((lane) => (
@@ -108,9 +99,7 @@ export default function TaskModal({
                 label="Title"
                 fullWidth
                 value={editedTask.title}
-                onChange={(e) =>
-                  setEditedTask({ ...editedTask, title: e.target.value })
-                }
+                onChange={(e) => handleChange({ title: e.target.value })}
               />
               <TextField
                 label="Description"
@@ -118,9 +107,7 @@ export default function TaskModal({
                 multiline
                 rows={4}
                 value={editedTask.description}
-                onChange={(e) =>
-                  setEditedTask({ ...editedTask, description: e.target.value })
-                }
+                onChange={(e) => handleChange({ description: e.target.value })}
               />
             </Stack>
             <Box
@@ -138,8 +125,7 @@ export default function TaskModal({
                   type="number"
                   value={editedTask.storyPoints || ""}
                   onChange={(e) =>
-                    setEditedTask({
-                      ...editedTask,
+                    handleChange({
                       storyPoints: e.target.value ? Number(e.target.value) : 0,
                     })
                   }

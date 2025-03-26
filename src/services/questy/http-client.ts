@@ -341,9 +341,9 @@ export interface UpdateTaskDTO {
   description?: string;
   /**
    * Task status
-   * @example "IN_PROGRESS"
+   * @example "BACKLOG"
    */
-  status?: "TODO" | "IN_PROGRESS" | "DONE";
+  status?: "BACKLOG" | "DOING" | "DONE";
   /**
    * Story points
    * @example 5

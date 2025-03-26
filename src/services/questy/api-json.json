@@ -887,8 +887,8 @@
           "status": {
             "type": "string",
             "description": "Task status",
-            "example": "IN_PROGRESS",
-            "enum": ["TODO", "IN_PROGRESS", "DONE"]
+            "example": "BACKLOG",
+            "enum": ["BACKLOG", "DOING", "DONE"]
           },
           "storyPoints": {
             "type": "number",

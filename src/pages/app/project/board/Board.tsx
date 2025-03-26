@@ -30,6 +30,8 @@ export default function Board() {
   const updateTask = useUpdateTask(projectId || "");
   const lanes = Object.values(Task.Status);
   const [selectedTask, setSelectedTask] = useState<Task.Model | null>(null);
+  const [editedTask, setEditedTask] = useState<Task.Model | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!projectId) {
     return <Navigate to="/projects" />;
@@ -37,43 +39,55 @@ export default function Board() {
 
   const handleAddCard = (status: Task.StatusType) => {};
 
-  const handleSaveCard = (
-    status: Task.StatusType,
-    taskId: string,
-    title: string,
-    description: string,
-    updates?: Partial<Task.UpdateDTO>
-  ) => {};
+  const handleSaveCard = async () => {
+    if (!editedTask) return;
+
+    const status = editedTask.status;
+
+    await updateTask.mutateAsync({
+      taskId: editedTask.id,
+      data: {
+        title: editedTask.title,
+        description: editedTask.description,
+        status,
+        storyPoints: editedTask.storyPoints,
+        reporterId: editedTask.reporter?.id,
+        assigneeId: editedTask.assignee?.id,
+      },
+    });
+
+    setIsModalOpen(false);
+  };
 
   const handleCardClick = (task: Task.Model) => {
     setSelectedTask(task);
+    setEditedTask(task);
+    setIsModalOpen(true);
   };
 
   const handleModalClose = () => {
     setSelectedTask(null);
+    setEditedTask(null);
+    setIsModalOpen(false);
   };
 
-  const handleEditCard = (task: Task.Model) => {};
+  const handleEditCard = (task: Task.Model) => {
+    setEditedTask(task);
+  };
 
-  const handleDragEnd = async (result: DropResult) => {
-    const { destination, source, draggableId } = result;
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
 
-    if (!destination) return;
-
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return;
-    }
-
+    const { draggableId, destination } = result;
     const task = tasks?.find((t) => t.id === draggableId);
     if (!task) return;
 
-    await updateTask.mutateAsync({
-      taskId: draggableId,
+    const status = destination.droppableId as Task.StatusType;
+
+    updateTask.mutateAsync({
+      taskId: task.id,
       data: {
-        status: destination.droppableId as "TODO" | "IN_PROGRESS" | "DONE",
+        status,
       },
     });
   };
@@ -200,21 +214,7 @@ export default function Board() {
                                 <TaskCard
                                   task={task}
                                   status={lane}
-                                  onSave={(
-                                    status,
-                                    taskId,
-                                    title,
-                                    description,
-                                    updates
-                                  ) =>
-                                    handleSaveCard(
-                                      status as Task.StatusType,
-                                      taskId,
-                                      title,
-                                      description,
-                                      updates
-                                    )
-                                  }
+                                  onSave={handleSaveCard}
                                   onClick={handleCardClick}
                                   onMaximize={handleCardClick}
                                   onEdit={handleEditCard}
@@ -233,21 +233,14 @@ export default function Board() {
         </Box>
       </DragDropContext>
 
-      {selectedTask && (
+      {selectedTask && editedTask && (
         <TaskModal
-          open={!!selectedTask}
+          open={isModalOpen}
           task={selectedTask}
           status={selectedTask.status}
           onClose={handleModalClose}
-          onSave={(status, taskId, title, description, updates) =>
-            handleSaveCard(
-              status as Task.StatusType,
-              taskId,
-              title,
-              description,
-              updates
-            )
-          }
+          onSave={handleSaveCard}
+          onEdit={handleEditCard}
         />
       )}
     </ProjectLayout>

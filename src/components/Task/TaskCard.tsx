@@ -14,13 +14,7 @@ import { Task } from "../../entities/task";
 interface TaskCardProps {
   task: Task.Model;
   status: Task.StatusType;
-  onSave: (
-    status: Task.StatusType,
-    taskId: string,
-    title: string,
-    description: string,
-    updates?: Partial<Task.UpdateDTO>
-  ) => void;
+  onSave: () => void;
   onClick: (task: Task.Model) => void;
   onMaximize: (task: Task.Model) => void;
   onEdit: (task: Task.Model) => void;
@@ -31,7 +25,7 @@ export default function TaskCard({
   status,
   onSave,
   onClick,
-
+  onMaximize,
   onEdit,
 }: TaskCardProps) {
   const handleClick = (e: React.MouseEvent) => {
@@ -41,11 +35,7 @@ export default function TaskCard({
 
   if (task.metadata?.isEditing) {
     return (
-      <ClickAwayListener
-        onClickAway={() =>
-          onSave(status, task.id, task.title, task.description || "")
-        }
-      >
+      <ClickAwayListener onClickAway={onSave}>
         <Paper
           elevation={0}
           sx={{
@@ -68,7 +58,7 @@ export default function TaskCard({
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
-                  onSave(status, task.id, task.title, task.description || "");
+                  onSave();
                 }
               }}
             />
