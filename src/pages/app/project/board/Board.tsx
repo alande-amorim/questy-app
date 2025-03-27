@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import ProjectLayout from "../../../../components/layouts/ProjectLayout/ProjectLayout";
 import AddIcon from "@mui/icons-material/Add";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import TaskCard from "../../../../components/Task/TaskCard";
 import TaskModal from "../../../../components/Task/TaskModal";
 import { Task } from "../../../../entities";
@@ -26,10 +26,13 @@ import {
 } from "../../../../hooks/queries/useTasks";
 import { Navigate, useParams } from "react-router";
 import { useAuthStore } from "../../../../store/useAuthStore";
+import { useProject } from "../../../../hooks/queries/useProjects";
+import { UserResponseDTO } from "../../../../services/questy";
 
 export default function Board() {
   const { projectId } = useParams();
   const { data: tasks, isLoading } = useProjectTasks(projectId || "");
+  const { data: project } = useProject(projectId || "");
   const updateTask = useUpdateTask(projectId || "");
   const createTask = useCreateTask(projectId || "");
   const lanes = Object.values(Task.Status);
@@ -38,6 +41,21 @@ export default function Board() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const user = useAuthStore((state) => state.user);
+
+  const users = useMemo(() => {
+    const users: UserResponseDTO[] = [];
+
+    const projectUsers = project?.data?.users as unknown as {
+      user: UserResponseDTO;
+    }[];
+    if (projectUsers && Array.isArray(projectUsers)) {
+      projectUsers.forEach((pu: any) => {
+        users.push(pu.user as UserResponseDTO);
+      });
+    }
+
+    return users;
+  }, [project]);
 
   if (!projectId) {
     return <Navigate to="/projects" />;
@@ -282,7 +300,7 @@ export default function Board() {
         </Box>
       </DragDropContext>
 
-      {selectedTask && editedTask && (
+      {selectedTask && editedTask && project?.data && (
         <TaskModal
           open={isModalOpen}
           task={selectedTask}
@@ -291,6 +309,7 @@ export default function Board() {
           onSave={handleSaveCard}
           onEdit={handleEditCard}
           title={isCreating ? "Create New Task" : "Edit Task"}
+          users={users}
         />
       )}
     </ProjectLayout>
