@@ -75,7 +75,7 @@ export default function TaskModal({
           <Stack spacing={1}>
             <Typography variant="h6">{title}</Typography>
             <Typography variant="overline" color="text.secondary">
-              {task.id}
+              {task.code}
             </Typography>
           </Stack>
         </DialogTitle>

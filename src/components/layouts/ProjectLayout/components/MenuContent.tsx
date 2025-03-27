@@ -23,16 +23,16 @@ const getProjectMenuItems = (projectId: string) => [
     icon: <GroupIcon />,
     route: `/project/${projectId}/members`,
   },
-  {
-    text: "Backlog",
-    icon: <ViewListIcon />,
-    route: `/project/${projectId}/backlog`,
-  },
-  {
-    text: "Settings",
-    icon: <SettingsIcon />,
-    route: `/project/${projectId}/settings`,
-  },
+  // {
+  //   text: "Backlog",
+  //   icon: <ViewListIcon />,
+  //   route: `/project/${projectId}/backlog`,
+  // },
+  // {
+  //   text: "Settings",
+  //   icon: <SettingsIcon />,
+  //   route: `/project/${projectId}/settings`,
+  // },
 ];
 
 export default function MenuContent() {

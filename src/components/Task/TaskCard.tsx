@@ -108,7 +108,7 @@ export default function TaskCard({
         <Stack spacing={1}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Typography variant="caption" color="text.secondary">
-              {task.id}
+              {task.code}
             </Typography>
           </Box>
           <Typography

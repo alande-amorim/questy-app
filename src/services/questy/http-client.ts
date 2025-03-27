@@ -76,9 +76,14 @@ export interface ProjectResponseDTO {
   updatedAt: string;
   /**
    * Project tasks
-   * @example [{"id":"123e4567-e89b-12d3-a456-426614174000","title":"Task 1","description":"Task description","status":"BACKLOG"}]
+   * @example [{"id":"123e4567-e89b-12d3-a456-426614174000","title":"Task 1","description":"Task description","status":"BACKLOG","createdAt":"2025-03-27T14:06:17.807Z","updatedAt":"2025-03-27T14:06:17.807Z"}]
    */
-  tasks: string[];
+  tasks: any[][];
+  /**
+   * Project users
+   * @example [{"id":"123e4567-e89b-12d3-a456-426614174000","name":"John Doe","cognitoSub":"123e4567-e89b-12d3-a456-426614174000","email":"john.doe@example.com","createdAt":"2025-03-27T14:06:17.807Z","updatedAt":"2025-03-27T14:06:17.807Z"}]
+   */
+  users: any[][];
   /**
    * Project counts
    * @example {"tasks":10,"users":2}
@@ -275,6 +280,11 @@ export interface TaskResponseDTO {
    * @example "123e4567-e89b-12d3-a456-426614174000"
    */
   id: string;
+  /**
+   * Task code
+   * @example "PRJ-001"
+   */
+  code: string;
   /**
    * Task title
    * @example "Implement feature X"

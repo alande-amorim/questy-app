@@ -47,6 +47,7 @@ export default function Board() {
     console.log(user);
     const newTask: Task.Model = {
       id: "",
+      code: "",
       title: "",
       description: "",
       status: Task.Status.BACKLOG,
