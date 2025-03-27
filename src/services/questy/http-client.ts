@@ -76,12 +76,12 @@ export interface ProjectResponseDTO {
   updatedAt: string;
   /**
    * Project tasks
-   * @example [{"id":"123e4567-e89b-12d3-a456-426614174000","title":"Task 1","description":"Task description","status":"BACKLOG","createdAt":"2025-03-27T14:06:17.807Z","updatedAt":"2025-03-27T14:06:17.807Z"}]
+   * @example [{"id":"123e4567-e89b-12d3-a456-426614174000","title":"Task 1","description":"Task description","status":"BACKLOG","createdAt":"2025-03-27T15:21:01.371Z","updatedAt":"2025-03-27T15:21:01.371Z"}]
    */
   tasks: any[][];
   /**
    * Project users
-   * @example [{"id":"123e4567-e89b-12d3-a456-426614174000","name":"John Doe","cognitoSub":"123e4567-e89b-12d3-a456-426614174000","email":"john.doe@example.com","createdAt":"2025-03-27T14:06:17.807Z","updatedAt":"2025-03-27T14:06:17.807Z"}]
+   * @example [{"id":"123e4567-e89b-12d3-a456-426614174000","name":"John Doe","cognitoSub":"123e4567-e89b-12d3-a456-426614174000","email":"john.doe@example.com","createdAt":"2025-03-27T15:21:01.371Z","updatedAt":"2025-03-27T15:21:01.371Z"}]
    */
   users: any[][];
   /**
@@ -223,6 +223,11 @@ export interface CreateTaskDTO {
    */
   description: string;
   /**
+   * Task acceptance criteria
+   * @example "Acceptance criteria for the task"
+   */
+  acceptanceCriteria: string | null;
+  /**
    * Task status
    * @example "BACKLOG"
    */
@@ -296,6 +301,11 @@ export interface TaskResponseDTO {
    */
   description: string;
   /**
+   * Task acceptance criteria
+   * @example "Acceptance criteria for the task"
+   */
+  acceptanceCriteria: string | null;
+  /**
    * Task status
    * @example "BACKLOG"
    */
@@ -349,6 +359,11 @@ export interface UpdateTaskDTO {
    * @example "Updated task description"
    */
   description?: string;
+  /**
+   * Task acceptance criteria
+   * @example "Updated task acceptance criteria"
+   */
+  acceptanceCriteria?: string | null;
   /**
    * Task status
    * @example "BACKLOG"

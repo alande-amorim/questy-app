@@ -62,12 +62,12 @@ export default function Board() {
   }
 
   const handleAddCard = () => {
-    console.log(user);
     const newTask: Task.Model = {
       id: "",
       code: "",
       title: "",
       description: "",
+      acceptanceCriteria: "",
       status: Task.Status.BACKLOG,
       storyPoints: 0,
       projectId,
@@ -99,6 +99,7 @@ export default function Board() {
       await createTask.mutateAsync({
         title: editedTask.title,
         description: editedTask.description || "",
+        acceptanceCriteria: editedTask.acceptanceCriteria || "",
         status: editedTask.status,
         storyPoints: editedTask.storyPoints,
         reporterId: editedTask.reporter?.id || "",

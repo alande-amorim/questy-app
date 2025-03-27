@@ -559,8 +559,8 @@
                 "title": "Task 1",
                 "description": "Task description",
                 "status": "BACKLOG",
-                "createdAt": "2025-03-27T14:06:17.807Z",
-                "updatedAt": "2025-03-27T14:06:17.807Z"
+                "createdAt": "2025-03-27T15:21:01.371Z",
+                "updatedAt": "2025-03-27T15:21:01.371Z"
               }
             ],
             "type": "array",
@@ -574,8 +574,8 @@
                 "name": "John Doe",
                 "cognitoSub": "123e4567-e89b-12d3-a456-426614174000",
                 "email": "john.doe@example.com",
-                "createdAt": "2025-03-27T14:06:17.807Z",
-                "updatedAt": "2025-03-27T14:06:17.807Z"
+                "createdAt": "2025-03-27T15:21:01.371Z",
+                "updatedAt": "2025-03-27T15:21:01.371Z"
               }
             ],
             "type": "array",
@@ -745,6 +745,12 @@
             "description": "Task description",
             "example": "Detailed description of the task"
           },
+          "acceptanceCriteria": {
+            "type": "string",
+            "description": "Task acceptance criteria",
+            "example": "Acceptance criteria for the task",
+            "nullable": true
+          },
           "status": {
             "type": "string",
             "description": "Task status",
@@ -771,6 +777,7 @@
         "required": [
           "title",
           "description",
+          "acceptanceCriteria",
           "status",
           "storyPoints",
           "assigneeId",
@@ -833,6 +840,12 @@
             "description": "Task description",
             "example": "Detailed description of the task"
           },
+          "acceptanceCriteria": {
+            "type": "string",
+            "description": "Task acceptance criteria",
+            "example": "Acceptance criteria for the task",
+            "nullable": true
+          },
           "status": {
             "type": "string",
             "description": "Task status",
@@ -887,6 +900,7 @@
           "code",
           "title",
           "description",
+          "acceptanceCriteria",
           "status",
           "storyPoints",
           "projectId",
@@ -908,6 +922,12 @@
             "type": "string",
             "description": "Task description",
             "example": "Updated task description"
+          },
+          "acceptanceCriteria": {
+            "type": "string",
+            "description": "Task acceptance criteria",
+            "example": "Updated task acceptance criteria",
+            "nullable": true
           },
           "status": {
             "type": "string",

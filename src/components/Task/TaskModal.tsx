@@ -105,9 +105,18 @@ export default function TaskModal({
               fullWidth
               multiline
               rows={4}
-              required
               value={editedTask.description}
               onChange={(e) => handleChange({ description: e.target.value })}
+            />
+            <TextField
+              label="Acceptance Criteria"
+              fullWidth
+              multiline
+              rows={4}
+              defaultValue={editedTask.acceptanceCriteria ?? ""}
+              onChange={(e) =>
+                handleChange({ acceptanceCriteria: e.target.value })
+              }
             />
           </Stack>
           <Box

@@ -37,7 +37,6 @@ export default function UserSelector({
           <em>None</em>
         </MenuItem>
         {users.map((user) => {
-          console.log({ user });
           return (
             <MenuItem key={user.id} value={user.id}>
               {user.name}
