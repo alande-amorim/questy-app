@@ -7,8 +7,6 @@ import ListItemText from "@mui/material/ListItemText";
 import Stack from "@mui/material/Stack";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import GroupIcon from "@mui/icons-material/Group";
-import ViewListIcon from "@mui/icons-material/ViewList";
-import SettingsIcon from "@mui/icons-material/Settings";
 import { Link, useParams } from "react-router";
 import ProjectSelector from "../../AppLayout/components/ProjectSelector";
 
@@ -23,20 +21,10 @@ const getProjectMenuItems = (projectId: string) => [
     icon: <GroupIcon />,
     route: `/project/${projectId}/members`,
   },
-  // {
-  //   text: "Backlog",
-  //   icon: <ViewListIcon />,
-  //   route: `/project/${projectId}/backlog`,
-  // },
-  // {
-  //   text: "Settings",
-  //   icon: <SettingsIcon />,
-  //   route: `/project/${projectId}/settings`,
-  // },
 ];
 
 export default function MenuContent() {
-  const { id: projectId } = useParams();
+  const { projectId } = useParams();
   const menuItems = getProjectMenuItems(projectId || "");
 
   return (
